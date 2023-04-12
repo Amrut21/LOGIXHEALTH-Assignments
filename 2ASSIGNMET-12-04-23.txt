@@ -1,0 +1,64 @@
+
+							
+(i) Insert the following data into the above table:
+
+insert into HOSPITAL VALUES
+(1,'Arprit',62,'Surgery','1998-01-12',300,'M'),
+(2,'Zarina',22,'ENT','1997-12-12',250,'F'),	
+(3,'Kareem',32,'Orthopedic','1998-02-19',200,'M'),
+(4,'Arun',12,'Surgery','1998-01-11',300,'M'),	
+(5,'Zubin',30,'ENT','1998-01-12',250,'M'),	
+(6,'Ketaki',16,'ENT','1998-02-24',250,'F'),	
+(7,'Ankita',29,'Cardiology','1998-02-20',800,'F'),	
+(8,'Zareen',45,'Gynaecologist','1998-02-22',300,'F'),	
+(9,'Kush',19,'Cardiology','1998-01-13',	800,'M'),	
+(10,'Shilpa',23,'NuclearMedicine','1998-01-20',400,'F');
+
+							
+(ii) Write a command to describe the structure of the above table.
+
+exec sp_help HOSIPTAL;
+
+(iii) Display the data in the following manner: Name, ''of Age'', Age, ''got admitted on'', Dateofadm.
+
+SELECT Name,'of age',age,'got admitted on',Dateofadm from HOSPITAL;
+
+(iv) Add one more column in the above table as Address of type CHAR(20).
+
+ALTER TABLE hospital ADD Address char(20);
+
+(v) Change the size of column Address as CHAR(25).
+
+ALTER TABLE hospital ALTER COLUMN Address CHAR(25);
+
+(vi) Modify the column Address as VARCHAR(25).
+
+ALTER TABLE Hospital ALTER COLUMN Address varchar(25);
+
+(vii) Change the name of the column Address to Home_Address.
+
+exec sp_rename 'HOSPITAL.ADDRESS','HOME_ADDRESS','COLUMN';
+
+(viii) Drop the column Home_Address.
+
+ALTER TABLE HOSPITAL DROP COLUMN HOME_ADDRESS;
+
+(ix) Rename the table Hospital to Hospital_Data.
+
+EXEC sp_rename 'HOSPITAL','HOSPITAL_DATA';
+
+(x) Update the age of patient to 30 where patient id is 7.
+
+UPDATE HOSPITAL_DATA
+SET age=30
+WHERE PNO=7;
+
+(xi) Delete all the rows of the table Hospital_Data.
+
+	DELETE FROM HOSPITAL_DATA;
+
+(xii) Delete the table Hospital_Data.
+
+DROP TABLE HOSPITAL_DATA;
+
+	
