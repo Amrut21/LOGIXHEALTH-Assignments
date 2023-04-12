@@ -1,0 +1,113 @@
+(a) To select all the columns of the above table.
+
+SELECT * FROM EMPLOYEE;
+
+(b) To list the name and employee number from the above table.
+
+SELECT ENAME,ENO FROM EMPLOYEE;
+
+(c) To list all names, hiredate and salary of all employees.
+
+SELECT ENAME,HIREDATE,SAL FROM EMPLOYEE;
+
+(d) To display the employee name and the incremented value of SAL as SAL+ 300.
+
+SELECT ENAME,SAL+300  FROM EMPLOYEE;
+
+(e) To list the employee name and his annual salary (Annual salary=12 *sal +100).
+
+SELECT ENAME,12*SAL+100 AS Annual_salary FROM EMPLOYEE;
+
+(f) Display the ename and sal where comm is NULL.
+SELECT ENAME , SAL FROM EMPLOYEE
+WHERE COMM IS NULL;
+
+(g) To list the distinct department number from the table.
+SELECT DISTINCT(DEPT) FROM EMPLOYEE;
+
+(h) To list the unique jobs from the table.
+SELECT DISTINCT(JOB) FROM EMPLOYEE;
+
+(i) To list the salary where salary is less than the commission.
+SELECT SAL FROM EMPLOYEE
+WHERE SAL < COMM;
+
+(j) To list the salary between 3000 and 4000.
+
+SELECT SAL FROM EMPLOYEE
+WHERE SAL BETWEEN 3000 AND 4000;
+
+(k) To list the mgr which are IN 7902, 7566, 7788.
+SELECT MGR FROM EMPLOYEE
+WHERE MGR IN (7902, 7566, 7788);
+
+(l) To list the ename starting with 'S'.
+SELECT * FROM EMPLOYEE
+WHERE ENAME LIKE 'S%';
+
+(m) To list all the columns where salary is greater than 4100.
+SELECT * FROM EMPLOYEE
+WHERE SAL>4100;
+
+(n) To list all the columns in the ascending order of hiredate.
+SELECT * FROM EMPLOYEE
+ORDER BY HIREDATE;
+
+(o) To list all the columns in the ascending order of deptno and descending order of salary.
+SELECT * FROM EMPLOYEE
+ORDER BY DEPT ASC,SAL DESC;
+
+(p) To display the employee name and job of employees hired between Feb 20, 1981 and May 1, 1981.
+
+SELECT ENAME,JOB FROM EMPLOYEE
+WHERE HIREDATE BETWEEN '1981-02-20' AND '1981-05-01';
+
+(q) To display the employee name and deptno of all employees in department 20 and 30 in alphabetical ORDER BY name.
+
+SELECT ENAME,DEPT FROM EMPLOYEE
+WHERE DEPT IN (20,30)
+ORDER BY ENAME;
+
+(r) To list the name and salary of all the employees who earn more than 1200 and are in department 10 or 40.
+
+SELECT ENAME,SAL FROM EMPLOYEE
+WHERE SAL>1200 AND DEPT IN (10,40);
+
+(s) To list name and hiredate of all the employees who are hired in 1981.
+SELECT ENAME , HIREDATE FROM EMPLOYEE
+WHERE HIREDATE LIKE '1981%';
+
+(t) To list all the employees who do not have manager.
+
+SELECT * FROM EMPLOYEE
+WHERE MGR IS NULL;
+
+(u) To list name and salary of all employees who earn commissions.
+
+SELECT ENAME , SAL FROM EMPLOYEE
+WHERE COMM IS NOT NULL;
+
+(v) To list the names of all employees where the second letter of their name is an a .
+SELECT ENAME FROM EMPLOYEE
+WHERE ENAME LIKE '_a%';
+
+(w) To list the names and job of all the employees who work in department 20 and their manager is 7788.
+SELECT ENAME,JOB FROM EMPLOYEE
+WHERE DEPT=20 AND MGR=7788;
+
+
+(x) Write the output of the following:
+(i) SELECT ENAME, 12 SAL+ COMM FROM EMPLOYEE WHERE ENAME='Ashok Singhal' ;
+	ENAME              (No column name)
+	ASHOK SINGHAL		43500
+
+(ii) SELECT ENAME FROM EMPLOYEE WHERE ENAME LIKE '_a%' ;
+	ENAME 
+	MARTIN S
+	KAVITA SHARMA
+	MANOJ KAUSHIK
+	JAYDEEP RANA
+
+(iii) SELECT ENAME, MGR FROM EMPLOYEE WHERE MGR IS NULL ;
+	ENAME			MGR
+	KAVITA SHARMA		NULL
