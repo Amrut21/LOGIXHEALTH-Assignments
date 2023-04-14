@@ -1,0 +1,69 @@
+
+
+1.BOOKS AND ISSUED TABLE
+
+(i) To show Book_Name, Author_Name, Price and Quantity_Issued of books of First Publ publishers and Book_Id is present in ISSUED.												
+
+SELECT Book_Name,Author_Name,Price,Quality_Issued FROM Books B,Issued I
+WHERE B.Book_id=I.Book_id AND Publishers='First Publ';
+
+(ii) To list the names from books of text type whose Book_Id is present in ISSUED table.
+
+SELECT Book_Name FROM BOOKS B,ISSUED I
+WHERE B.Book_Id=I.Book_Id
+
+																		
+(iii) To display the Book_Name and Price from table BOOKS in ascending order of their Price.	
+
+SELECT Book_Name, Price FROM BOOKS
+ORDER BY Price
+																	
+(iv) To increase the price of all books of EPB Publishers by 50.
+UPDATE BOOKS
+SET PRICE=PRICE+50
+WHERE PUBLISHERS='EPB'
+
+																		
+(v) To show Book_Name, Type and Quantity_Issued of books of EPB publishers and Book_Id is present in ISSUED. Filter the records such that the Quantity_Issued is greater than 4.
+
+SELECT Book_Name,Type,Quantity_Issued FROM Books B,ISSUED I
+where B.Book_Id = I.Book_Id AND Publishers='EPB' AND Quantity_Issued>4 ;
+
+														
+(vi) Fetch all the Issued books with details like Book_Id, Book_Name, Quantity_Issued.	
+
+SELECT I.BOOK_ID,Book_Name,Quality_Issued FROM BOOKS B,ISSUED i
+WHERE B.Book_Id = I.Book_Id;
+														
+(vii) Fetch the Book_Id, Book_Name, Author_Name of those books which were issued for the maximum time.																		
+
+SELECT BOOKS.BOOK_ID,BOOK_NAME,AUTHOR_NAME FROM BOOKS,ISSUED WHERE
+BOOKS.BOOK_ID=ISSUED.BOOK_ID AND QUANTITY_ISSUED=(SELECT MAX(Quantity_Issued) FROM ISSUED);
+
+(viii) Fetch all the details of non-issued books.
+
+SELECT * FROM BOOKS WHERE BOOK_ID NOT IN(SELECT BOOK_ID FROM ISSUED);
+															
+(ix) SELECT COUNT(*) FROM BOOKS;	
+5																	
+(x) SELECT MAX(Price) FROM BOOKS WHERE Quantity >= 15;	
+
+750
+																	
+(xi) SELECT Book_Name, Author_Name FROM BOOKS WHERE Publishers ="EPB" ;
+WE HAVE TO USE '' In where statement
+
+Book_Name	Author_Name
+Fast Cook         Lata Kapoor
+My First C++      Brain and Brook
+
+																
+2. Take a table of your choice. Implement Self Join.
+
+CREATE TABLE employees (
+    id INT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    supervisor_id INT
+);
+
+SELECT e1.name e2.name FROM employees e1,employees e2  where e1.supervisor_id = e2.id;
