@@ -10,7 +10,7 @@ WHERE B.Book_id=I.Book_id AND Publishers='First Publ';
 (ii) To list the names from books of text type whose Book_Id is present in ISSUED table.
 
 SELECT Book_Name FROM BOOKS B,ISSUED I
-WHERE B.Book_Id=I.Book_Id
+WHERE B.Book_Id=I.Book_Id and TYPEOFBOOK='TEXT';
 
 																		
 (iii) To display the Book_Name and Price from table BOOKS in ascending order of their Price.	
