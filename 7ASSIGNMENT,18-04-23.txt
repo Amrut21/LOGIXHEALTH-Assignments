@@ -1,0 +1,115 @@
+(1) To find the salesperson and customer who reside in the same city. Return Salesman_Name, Customer_Name and City.
+
+SELECT NAME,CUSTOMER_NAME,S.CITY FROM SALESMAN S, CUSTOMER C 
+WHERE C.CITY=S.CITY
+
+(2) To find those orders where the Purchase_Amount exists between 500 and 2000. Return Order_No, Purchase_Amount, Customer_Name, City.
+
+
+SELECT ORDER_NO,PURCHASE_AMOUNT,CUSTOMER_NAME,CITY
+FROM ORDERS O JOIN CUSTOMER C ON O.CUSTOMER_ID=O.CUSTOMER_ID
+WHERE PURCHASE_AMOUNT BETWEEN 500 AND 2000
+
+
+(3) To find the salesperson(s) and the customer(s) he represents. Return Customer_Name, City, Salesman_Name, Commission.
+
+SELECT CUSTOMER_NAME,C.CITY,NAME,COMMISSION FROM
+SALESMAN S JOIN CUSTOMER C ON S.SALESMAN_ID = C.SALESMAN_ID
+
+
+(4) To find salespeople who received commissions of more than 12 percent from the company. Return Customer_Name, Customer_City, Salesman_Name, Commission.
+
+SELECT CUSTOMER_NAME,C.CITY,S.NAME,COMMISSION
+FROM SALESMAN S JOIN CUSTOMER C ON S.SALESMAN_ID=C.SALESMAN_ID
+WHERE COMMISSION>0.12
+
+(5) To locate those salespeople who do not live in the same city where their customers live and have received a commission of more than 12% from the company. Return Customer_Name, Customer_City,
+Salesman_Name, Salesman_City, Commission.
+
+
+SELECT C.CUSTOMER_NAME,C.CITY,S.NAME,S.CITY,COMMISSION
+FROM SALESMAN S JOIN CUSTOMER C ON S.SALESMAN_ID=C.SALESMAN_ID
+WHERE S.CITY!=C.CITY AND COMMISSION>0.12
+
+
+(6) To find the details of an order. Return Order_No, Order_Date, Purchase_Amount, Customer_Name, Grade, Salesman_Name, Commission.
+
+SELECT O.ORDER_NO,O.ORDER_DATE,O.PURCHASE_AMOUNT,C.CUSTOMER_NAME,GRADE,S.NAME,COMMISSION
+FROM CUSTOMER C,SALESMAN S , ORDERS O
+WHERE S.SALESMAN_ID=C.SALESMAN_ID AND O.SALESMAN_ID =C.SALESMAN_ID 
+
+(7) To display the Customer_Name, Customer_City, Grade, Salesman_Name, Salesman_City. The results should be sorted by ascending order of Customer_Id.
+
+
+SELECT C.CUSTOMER_NAME,C.CITY,C.GRADE,S.NAME,S.CITY
+FROM CUSTOMER C JOIN SALESMAN S ON C.SALESMAN_ID=S.SALESMAN_ID
+ORDER BY CUSTOMER_ID
+
+(8) To find those customers with a grade less than 300. Return Customer_Name, Customer_City, Grade, Salesman_Name, Salesman_City. The results should be sorted by ascending order of Customer_Id.
+
+SELECT C.CUSTOMER_NAME,C.CITY,GRADE,S.NAME,S.CITY
+FROM CUSTOMER C JOIN SALESMAN S ON S.SALESMAN_ID=C.SALESMAN_ID
+WHERE GRADE<300
+ORDER BY C.CUSTOMER_ID
+
+
+(9) To make a report with Customer_Name, Customer_City, Order_No, Order_Date, and Purchase_Amount in ascending order according to the order date to determine whether any of the existing customers have
+placed an order or not.
+
+SELECT C.CUSTOMER_NAME,C.CITY,O.ORDER_NO,O.ORDER_DATE,PURCHASE_AMOUNT FROM
+CUSTOMER C LEFT OUTER JOIN ORDERS O ON C.CUSTOMER_ID=O.CUSTOMER_ID
+ORDER BY O.ORDER_DATE
+
+(10) To generate a report with Customer_Name, Customer_City, Order_No, Order_Date, Purchase_Amount, Salesperson_Name, and Commission to determine if any of the existing customers have not placed
+orders or if they have placed orders through their salesman or by themselves.
+
+SELECT Customer_Name,C.City,Order_No,Order_Date,Purchase_Amount,
+Name AS SNAME,Commission FROM CUSTOMER C LEFT JOIN ORDERS O ON
+C.CUSTOMER_ID=O.CUSTOMER_ID LEFT JOIN SALESMAN S ON
+O.SALESMAN_ID=S.SALESMAN_ID 
+
+
+(11) To generate a list in ascending order of salespersons who work either for one or more customers or have not yet joined any of the customers. Return Customer_Name, Customer_City, Customer_Grade,
+Salesman_Name, Salesman_City.
+
+SELECT C.CUSTOMER_NAME,C.CITY,C.GRADE,S.NAME,S.CITY
+FROM CUSTOMER C LEFT JOIN SALESMAN S ON C.SALESMAN_ID=S.SALESMAN_ID
+ORDER BY S.SALESMAN_ID
+
+
+(12) For those customers from the existing list who have put one or more orders, or which orders have been placed by the customer who is not on the list, create a report containing the Customer _Name,
+Customer_City, Order_No, Order_Date, and Purchase_Amount.
+
+SELECT C.CUSTOMER_NAME,C.CITY,O.ORDER_NO,O.ORDER_DATE,O.PURCHASE_AMOUNT
+FROM CUSTOMER C LEFT OUTER JOIN ORDERS O ON C.CUSTOMER_ID=O.CUSTOMER_ID
+
+(13) To generate a report with the Customer_Name, Customer_City, Order_No, Order_Date, Purchase_Amount for only those customers on the list who must have a grade and placed one or more orders or which
+order(s) have been placed by the customer who neither is on the list nor has a grade.
+
+SELECT C.CUSTOMER_NAME,C.CITY,O.ORDER_NO,O.ORDER_DATE,PURCHASE_AMOUNT
+FROM CUSTOMER C FULL OUTER JOIN ORDERS O ON C.CUSTOMER_ID=O.CUSTOMER_ID   
+WHERE C.GRADE IS NOT NULL 
+
+
+(14) To combine each row of the Salesman table with each row of the Customer table.
+
+SELECT * FROM SALESMAN,CUSTOMER
+
+
+(15) To create a Cartesian Product between Salesperson and Customer, i.e. each salesperson will appear for all customers and vice versa for that salesperson who belongs to that city.
+
+SELECT * FROM SALESMAN S CROSS JOIN CUSTOMER C 
+WHERE C.CITY IS NOT NULL
+
+(16) To create a Cartesian Product between Salesperson and Customer, i.e. each salesperson will appear for every customer and vice versa for those salesmen who belong to a city and customers who require
+a grade.
+
+SELECT * FROM SALESMAN S CROSS JOIN CUSTOMER C 
+WHERE C.CITY IS NOT NULL AND GRADE IS NOT NULL
+
+(17) To make a Cartesian Product between Salesman and Customer i.e. each salesman will appear for all customers and vice versa for those salesmen who must belong to a city which is not the same as his
+customer and the customers should have their own grade.
+
+
+SELECT * FROM SALESMAN S CROSS JOIN CUSTOMER C 
+WHERE S.SALESMAN_ID = C.SALESMAN_ID AND C.CITY IS NOT NULL AND  GRADE IS NOT NULL AND SALESMAN.CITY!=CUSTOMER.CITY;
