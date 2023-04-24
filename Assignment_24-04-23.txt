@@ -1,0 +1,18 @@
+CREATE view EMPLOYEEDETAIL1  
+as  
+select e.* from employees e , departments d  
+where e.dep_id=d.dep_id and d.dep_location='PERTH'
+
+CREATE view EMPLOYEEDETAIL2  
+as  
+select e.* from employees e , departments d  
+where e.dep_id=d.dep_id and d.dep_location='SYDNEY'
+
+SELECT * FROM EMPLOYEEDETAIL1
+
+SELECT * FROM EMPLOYEEDETAIL2
+
+
+SELECT * FROM EMPLOYEEDETAIL1,EMPLOYEEDETAIL2;
+
+
