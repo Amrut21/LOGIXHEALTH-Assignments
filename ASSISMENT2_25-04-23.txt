@@ -1,0 +1,172 @@
+(1) Write a command to describe the structure of the table, LMS_BOOK_DETAILS.	
+
+EXEC SP_HELP LMS_BOOK_DETAILS
+
+(2) Write a query to select all the columns of LMS_FINE_DEATILS.
+
+SELECT * FROM LMS_FINE_DETAILS
+
+(3) Write a query to select the name of the members who are living in Chennai.	
+
+SELECT MEMBER_NAME FROM LMS_MEMBERS
+WHERE CITY='CHENNAI'
+
+(4) Write a query to display the member id, member name, city and membership status of those members who are having life time membership. HINT: Life time membership status is Permanent.	
+
+      SELECT MEMBER_ID,MEMBER_NAME,CITY,MEMBERSHIP_STATUS FROM LMS_MEMBERS
+	  WHERE MEMBERSHIP_STATUS='PERMANENT'
+
+(5) Write a query to display the member id, member name who have taken the book with book code 'BL000002'.
+
+SELECT A.MEMBER_ID,MEMBER_NAME FROM LMS_MEMBERS A JOIN LMS_BOOK_ISSUE B ON A.MEMBER_ID=B.MEMBER_ID 
+WHERE B.BOOK_CODE='BL000002'
+
+(6) Write a query to display the book code, book title and author of the books whose author name begins with 'P'.	
+
+SELECT BOOK_CODE,BOOK_TITLE,AUTHOR FROM LMS_BOOK_DETAILS
+WHERE AUTHOR LIKE 'P%'
+
+(7) Write a query to display the total number of Java books available in library with alias name ‘NO_OF_BOOKS’.	
+
+SELECT COUNT(*) AS NO_OF_BOOKS FROM LMS_BOOK_DETAILS
+WHERE CATEGORY = 'JAVA'
+
+(8) Write a query to list the category and number of books in each category with alias name ‘NO_OF_BOOKS’.	
+
+SELECT CATEGORY,COUNT(CATEGORY) AS NO_OF_BOOKS FROM LMS_BOOK_DETAILS
+GROUP BY CATEGORY
+
+(9) Write a query to display the number of books published by "Prentice Hall” with the alias name “NO_OF_BOOKS”.	
+
+SELECT COUNT(*) AS NO_OF_BOOKS FROM LMS_BOOK_DETAILS
+WHERE PUBLICATION = 'Prentice Hall'
+
+(10) Write a query to display the book code, book title of the books which are issued on the date "1st April 2012".	
+
+SELECT A.BOOK_CODE,BOOK_TITLE FROM LMS_BOOK_DETAILS A ,LMS_BOOK_ISSUE B
+WHERE A.BOOK_CODE=B.BOOK_CODE AND DATE_ISSUE = '2012-04-01'
+
+OR 
+
+SELECT BOOK_CODE,BOOK_TITLE FROM LMS_BOOK_DETAILS WHERE BOOK_CODE IN
+(SELECT BOOK_CODE FROM LMS_BOOK_ISSUE WHERE DATE_ISSUE='2012-4-1')
+
+(11) Write a query to display the member id, member name, date of registration and expiry date of the members whose membership expiry date is before APR 2013.	
+
+SELECT MEMBER_ID,MEMBER_NAME,DATE_REGISTER,DATE_EXPIRE FROM LMS_MEMBERS
+WHERE DATE_EXPIRE < '2013-04-01'
+
+(12) Write a query to display the member id, member name, date of registration, membership status of the members who registered before "March 2012" and membership status is "Temporary".	
+
+SELECT MEMBER_ID,MEMBER_NAME, DATE_REGISTER , MEMBERSHIP_STATUS FROM LMS_MEMBERS
+WHERE DATE_REGISTER < '2012-03-01' AND MEMBERSHIP_STATUS = 'TEMPORARY'
+
+(13) Write a query to display the member id, member name who’s city is Chennai or Delhi.	
+
+SELECT MEMBER_ID,MEMBER_NAME FROM LMS_MEMBERS
+WHERE CITY IN ('CHENNAI','DELHI')
+
+OR
+
+SELECT MEMBER_ID,MEMBER_NAME FROM LMS_MEMBERS
+WHERE CITY='CHENNAI' OR CITY='DELHI'
+
+(14) Write a query to concatenate book title, author and display in the following format.
+Book_Title_is_written_by_Author	
+
+SELECT BOOK_TITLE + '  Book_Title_is_written_by_Author  ' + AUTHOR FROM LMS_BOOK_DETAILS
+
+(15) Write a query to display the average price of books which is belonging to ‘JAVA’ category with alias name “AVERAGEPRICE”.	
+
+SELECT AVG(PRICE) AS AVERAGEPRICE FROM LMS_BOOK_DETAILS 
+WHERE CATEGORY='JAVA'
+
+(16) Write a query to display the supplier id, supplier name and email of the suppliers who are all having gmail account.	
+
+SELECT SUPPLIER_ID,SUPPLIER_NAME,EMAIL FROM LMS_SUPPLIERS_DETAILS
+WHERE EMAIL LIKE '%@GMAIL.COM'
+
+(17) Write a query to display the supplier id, supplier name and contact details. Contact details can be either phone number or email or address with alias name
+“CONTACTDETAILS”. If phone number is
+null then display email, if email is also null then display the address of the supplier. Hint: Use Coalesce function.	
+
+SELECT SUPPLIER_ID,SUPPLIER_NAME,COALESCE(CONTACT,EMAIL,ADDRESS) AS CONTACTDETAILS FROM LMS_SUPPLIERS_DETAILS
+
+
+(18) Write a query to display the member id, member name of the members, book code and book title of the books taken by them.	
+
+SELECT M.MEMBER_ID,MEMBER_NAME,B.BOOK_CODE,BOOK_TITLE FROM
+LMS_MEMBERS M,LMS_BOOK_DETAILS B,LMS_BOOK_ISSUE BI WHERE
+M.MEMBER_ID=BI.MEMBER_ID AND B.BOOK_CODE=BI.BOOK_CODE
+
+(19) Write a query to display the member id, member name, fine range and fine amount of the members whose fine amount is less than 100.	
+
+SELECT B.MEMBER_ID,MEMBER_NAME,A.FINE_RANGE,FINE_AMOUNT FROM LMS_FINE_DETAILS A,LMS_MEMBERS B,LMS_BOOK_ISSUE C
+WHERE FINE_AMOUNT < 100 AND B.MEMBER_ID=C.MEMBER_ID AND A.FINE_RANGE=C.FINE_RANGE
+
+(20) Write a query to display the book code, book title and rack number of the books which are placed in rack 'A1' and sort by book title in ascending order.	
+
+SELECT BOOK_CODE,BOOK_TITLE,RACK_NUM FROM LMS_BOOK_DETAILS
+WHERE RACK_NUM='A1'
+ORDER BY BOOK_TITLE
+
+(21) Write a query to display the member id, member name and date of registration who have not taken any book.	
+
+SELECT MEMBER_ID,MEMBER_NAME,DATE_REGISTER FROM LMS_MEMBERS
+WHERE MEMBER_ID NOT IN (SELECT MEMBER_ID FROM LMS_BOOK_ISSUE)
+
+(22) Write a query to display the member id and member name of the members who has not paid any fine in the year 2012.	
+
+SELECT MEMBER_ID,MEMBER_NAME FROM LMS_MEMBERS 
+WHERE MEMBER_ID NOT IN (SELECT MEMBER_ID FROM LMS_BOOK_ISSUE A, LMS_FINE_DETAILS B WHERE A.FINE_RANGE=B.FINE_RANGE AND YEAR(DATE_RETURNED)=2012 GROUP BY A.MEMBER_ID HAVING SUM(FINE_AMOUNT)>0 )
+
+
+(23) Write a query to display the rack number and the number of books in each rack with alias name “NOOFBOOKS” and sort by rack number in ascending order.	
+
+SELECT RACK_NUM,COUNT(*) 'NOOFBOOKS' FROM LMS_BOOK_DETAILS
+GROUP BY RACK_NUM
+ORDER BY RACK_NUM
+
+(24) Write a query to display book issue number, member name, date or registration, date of expiry, book title, category author, price, date of issue, date of return, actual returned date, issue status, fine
+amount.	
+
+SELECT BOOK_ISSUE_NO,MEMBER_NAME,DATE_REGISTER,DATE_EXPIRE,
+BOOK_TITLE,CATEGORY,PRICE,DATE_ISSUE,DATE_RETURN,DATE_RETURNED,
+'ISSUED' AS BOOK_ISSUE_STATUS,FINE_AMOUNT
+FROM LMS_BOOK_ISSUE BI,LMS_MEMBERS M,LMS_BOOK_DETAILS B,LMS_FINE_DETAILS F
+WHERE M.MEMBER_ID=BI.MEMBER_ID AND B.BOOK_CODE=BI.BOOK_CODE
+AND F.FINE_RANGE=BI.FINE_RANGE
+
+
+(25) Write a query to display the member id, member name and number of remaining books he/she can take with “REMAININGBOOKS” as alias name. HINT: Assuming a member can take maximum 3
+books.
+
+
+SELECT M.MEMBER_ID,MEMBER_NAME,T.SQ as REMAINING_BOOKS FROM LMS_MEMBERS M 
+JOIN (SELECT A.MEMBER_ID,COUNT(i.MEMBER_ID) as SQ from LMS_MEMBERS a 
+left outer join LMS_BOOK_ISSUE i on a.MEMBER_ID= i.MEMBER_ID 
+group by a.MEMBER_ID)T on T.MEMBER_ID=m.MEMBER_ID
+
+(26) Write a query to display only the first three records of LMS_SUPPLIERS_DETAILS table.	
+
+SELECT  TOP 3 * FROM LMS_SUPPLIERS_DETAILS
+
+(27) Write a query to display the records of all suppliers excluding the first three suppliers.	
+
+SELECT * FROM LMS_SUPPLIERS_DETAILS
+WHERE SUPPLIER_ID NOT IN (SELECT  TOP 3 SUPPLIER_ID FROM LMS_SUPPLIERS_DETAILS)
+
+(28) Write a query to rename the table LMS_MEMBERS to LMS_MEMBERS_DETAILS.
+
+EXEC SP_RENAME 'LMS_MEMBERS' , 'LMS_MEMBERS_DETAILS'
+
+(29) Write a query to delete all the rows of the table LMS_FINE_DETAILS. [Without DELETE command]	
+
+TRUNCATE TABLE LMS_FINE_DETAILS
+
+(30) Write a query to select all the name of the books. [Without Asterisk (*) Operator]
+
+SELECT BOOK_CODE,BOOK_TITLE,CATEGORY,AUTHOR,PUBLICATION,PUBLISH_DATE,BOOK_EDITION,PRICE,RACK_NUM,DATE_ARRIVAL,SUPPLIER_ID FROM LMS_BOOK_DETAILS
+
+
+
