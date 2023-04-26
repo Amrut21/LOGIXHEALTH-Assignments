@@ -1,0 +1,135 @@
+1) Find all the orders issued by the salesman 'Paul Adam'. Return ORDER_NO, PURCHASE_AMOUNT, ORDER_DATE, CUSTOMER_ID and SALESMAN_ID.
+
+SELECT O.ORDER_NO,O.PURCHASE_AMOUNT,O.ORDER_DATE,O.CUSTOMER_ID,O.SALESMAN_ID FROM ORDERS O 
+WHERE O.SALESMAN_ID IN (SELECT SALESMAN_ID FROM SALESMAN WHERE NAME='Paul Adam')
+
+(2) Display all the orders for the salesman who resides in London.
+
+SELECT * FROM ORDERS
+WHERE SALESMAN_ID IN (SELECT SALESMAN_ID FROM SALESMAN WHERE CITY='lONDON')
+
+(3) Find all the orders issued against the salesman who works for the customer whose id is 3004.
+SELECT * FROM ORDERS
+WHERE CUSTOMER_ID IN (SELECT CUSTOMER_ID FROM CUSTOMER WHERE CUSTOMER_ID=3004)
+
+(4) Display all those orders for which the values are greater than the average order value for 10th Oct 2012.
+SELECT * FROM ORDERS WHERE PURCHASE_AMOUNT > ( SELECT AVG(PURCHASE_AMOUNT) FROM ORDERS ) AND ORDER_DATE='2012-10-10'
+
+(5) Find all the orders generated in Paris city.
+SELECT * FROM ORDERS 
+WHERE CUSTOMER_ID IN (SELECT CUSTOMER_ID FROM CUSTOMER WHERE CITY='PARIS')
+
+(6) Display the commissions of all the salesman who are servicing New York customers.
+
+SELECT COMMISSION FROM SALESMAN
+WHERE SALESMAN_ID IN (SELECT SALESMAN_ID FROM CUSTOMER WHERE CITY='NEW YORK')
+
+(7) Count the number of customers with grades above the average in New York city. Return grade and count.
+
+SELECT COUNT(GRADE),GRADE FROM CUSTOMER
+WHERE GRADE >(SELECT AVG(GRADE) FROM CUSTOMER WHERE CITY='NEW YORK')
+GROUP BY GRADE
+
+(8) Find those salespeople who earned the maximum commission. Return ORDER_NO, PURCHASE_AMOUNT, ORDER_DATE and SALESMAN_ID.
+
+SELECT ORDER_NO,PURCHASE_AMOUNT,ORDER_DATE,SALESMAN_ID FROM ORDERS
+WHERE SALESMAN_ID IN (SELECT  SALESMAN_ID FROM SALESMAN WHERE COMMISSION = (SELECT MAX(COMMISSION) FROM SALESMAN  ))
+
+(9) Find the customers who placed orders on 17 August 2012. Return ORDER_NO, PURCHASE_AMOUNT, ORDER_DATE, CUSTOMER_ID, SALESMAN_ID and CUSTOMER_NAME.
+
+SELECT ORDER_NO, PURCHASE_AMOUNT, ORDER_DATE, O.CUSTOMER_ID, O.SALESMAN_ID ,C.CUSTOMER_NAME
+FROM ORDERS O JOIN CUSTOMER C ON O.CUSTOMER_ID = C.CUSTOMER_ID 
+WHERE ORDER_DATE = '2012-08-17'
+
+	
+(10) Find salespeople who had more than one customer. Return SALESMAN_ID and NAME.
+
+SELECT S.SALESMAN_ID, NAME FROM SALESMAN S
+WHERE 1 < (SELECT COUNT(*) FROM CUSTOMER C WHERE S.SALESMAN_ID=C.SALESMAN_ID)
+
+
+
+(11) Find those orders which are higher than the average amount of the orders. Return ORDER_NO, PURCHASE_AMOUNT, ORDER_DATE, CUSTOMER_ID and SALESMAN_ID.
+
+SELECT ORDER_NO, PURCHASE_AMOUNT, ORDER_DATE, CUSTOMER_ID ,SALESMAN_ID FROM ORDERS
+WHERE PURCHASE_AMOUNT > (SELECT AVG(PURCHASE_AMOUNT) FROM ORDERS )
+
+(12) Find the sums of the amounts from the orders table, grouped by date, and eliminate all dates where the sum was not at least 1000.00 above the maximum order amount for that date.
+
+
+
+SELECT order_date, SUM (purchase_amount)
+FROM orders a
+GROUP BY order_date
+HAVING SUM (purchase_amount) >
+    (SELECT 1000.00 + MAX(purchase_amount) 
+     FROM orders b 
+     WHERE a.order_date = b.order_date);
+
+(13) Extract all data from the customer table if and only if one or more of the customers in the customer table are located in London.
+
+SELECT * FROM CUSTOMER 
+WHERE EXISTS ( SELECT * FROM CUSTOMER  WHERE CITY = 'LONDON')
+
+(14) Find salespeople who deal with multiple customers. Return SALESMAN_ID, NAME, CITY and COMMISSION.
+
+SELECT S.SALESMAN_ID,NAME,CITY,COMMISSION FROM SALESMAN S
+WHERE 1 < (SELECT COUNT(*) FROM CUSTOMER C WHERE S.SALESMAN_ID  = C.SALESMAN_ID ) 
+
+(15) Find the salespeople who deal with those customers who live in the same city. Return SALESMAN_ID, NAME, CITY and COMMISSION.
+
+SELECT S.SALESMAN_ID, S.NAME, S.CITY ,S.COMMISSION  FROM SALESMAN S
+WHERE SALESMAN_ID IN (SELECT C.SALESMAN_ID FROM CUSTOMER C WHERE S.CITY=C.CITY )
+
+(16) Find salespeople whose place of residence matches any city where customers live. Return SALESMAN_ID, NAME, CITY and COMMISSION.
+
+SELECT S.SALESMAN_ID, S.NAME, S.CITY ,S.COMMISSION  FROM SALESMAN S
+WHERE city in ( select city from customer)
+
+(17) Find all those salespeople whose names appear alphabetically lower than the customer’s name. Return SALESMAN_ID, NAME, CITY, COMMISSION.
+
+SELECT S.SALESMAN_ID, S.NAME, S.CITY ,S.COMMISSION  FROM SALESMAN S
+where exists ( select * from CUSTOMER C WHERE C.customer_name < S.name)
+
+(18) Find all those customers with a higher grade than any customer who belongs to the alphabetically lower than the city New York. Return CUSTOMER_ID, CUSTOMER_NAME, CITY, GRADE, SALESMAN_ID.
+
+SELECT * FROM customer
+WHERE grade > ANY(SELECT grade FROM CUSTOMER WHERE  city < 'New York');
+
+(19) Find all those orders whose order amount exceeds at least one of the orders placed on September 10th 2012. Return ORDER_NO, PURCHASE_AMOUNT, ORDER_DATE, CUSTOMER_ID and
+SALESMAN_ID.
+
+SELECT  ORDER_NO, PURCHASE_AMOUNT, ORDER_DATE, CUSTOMER_ID ,SALESMAN_ID FROM ORDERS
+WHERE PURCHASE_AMOUNT > ANY(SELECT PURCHASE_AMOUNT FROM ORDERS WHERE ORDER_DATE='2012-09-10' )
+
+	
+(20) Find orders where the order amount is less than the order amount of a customer residing in London City. Return ORDER_NO, PURCHASE_AMOUNT, ORDER_DATE, CUSTOMER_ID and SALESMAN_ID
+
+SELECT O.ORDER_NO, O.PURCHASE_AMOUNT, O.ORDER_DATE, O.CUSTOMER_ID, O.SALESMAN_ID FROM ORDERS O
+WHERE O.PURCHASE_AMOUNT < ANY(SELECT O.PURCHASE_AMOUNT FROM ORDERS O , CUSTOMER C WHERE C.CUSTOMER_ID = O.CUSTOMER_ID AND C.CITY='LONDON')
+
+
+(21)Find those orders where every order amount is less than the maximum order amount of a customer who lives in London City. Return ORDER_NO, PURCHASE_AMOUNT, ORDER_DATE, CUSTOMER_ID
+and SALESMAN_ID
+
+SELECT O.ORDER_NO, O.PURCHASE_AMOUNT, O.ORDER_DATE, O.CUSTOMER_ID, O.SALESMAN_ID FROM ORDERS O
+WHERE O.PURCHASE_AMOUNT < ANY (SELECT MAX(O.PURCHASE_AMOUNT) FROM ORDERS O JOIN customer C ON C.customer_id=O.CUSTOMER_ID AND C.CITY='LONDON')
+
+(22) Find those customers whose grades are higher than those living in New York City. Return CUSTOMER_ID, CUSTOMER_NAME, CITY, GRADE and SALESMAN_ID.
+
+SELECT CUSTOMER_ID, CUSTOMER_NAME, CITY, GRADE ,SALESMAN_ID FROM CUSTOMER 
+WHERE GRADE > ALL (SELECT  GRADE FROM CUSTOMER WHERE CITY='NEW YORK' )
+
+
+(23) Find those customers whose grades are different from those living in Paris. Return CUSTOMER_ID, CUSTOMER_NAME, CITY, GRADE and SALESMAN_ID.
+
+SELECT CUSTOMER_ID, CUSTOMER_NAME, CITY, GRADE ,SALESMAN_ID  FROM CUSTOMER WHERE
+GRADE NOT IN (SELECT GRADE FROM CUSTOMER WHERE CITY='PARIS')
+
+(24) Find all those customers who have different grades than any customer who lives in Dallas City. Return CUSTOMER_ID, CUSTOMER_ID, CITY, GRADE and SALESMAN_ID.
+SELECT CUSTOMER_ID, CUSTOMER_NAME, CITY, GRADE ,SALESMAN_ID  FROM CUSTOMER WHERE
+GRADE NOT IN (SELECT GRADE FROM CUSTOMER WHERE CITY='dallas')
+
+(25) Display the name of all the salesman. [Use ALL Operator]
+
+SELECT ALL name FROM salesman
