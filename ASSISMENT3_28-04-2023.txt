@@ -1,0 +1,113 @@
+1. To find those employees who receive a higher salary than the employee with ID 8844. Return ename.
+
+SELECT * FROM TBL_EMPLOYEE
+WHERE SALARY > (SELECT SALARY FROM TBL_EMPLOYEE WHERE EMPNO=8844)
+
+2. To find out which employees have the same designation as the employee whose ID is 8900. Return ename, deptno and job.
+
+SELECT * FROM TBL_EMPLOYEE
+WHERE JOB = (SELECT JOB FROM TBL_EMPLOYEE WHERE EMPNO=8900)
+
+
+3. To find those employees whose salary matches the lowest salary of any of the departments. Return ename and deptno.
+
+SELECT * FROM TBL_EMPLOYEE
+WHERE SALARY = (SELECT MIN (salary) FROM tbl_EMPLOYEE)
+
+4. To find those employees who earn more than the average salary. Return empno, ename, deptno.
+
+SELECT * FROM tbl_EMPLOYEE
+WHERE SALARY > (SELECT AVG(SALARY) FROM TBL_EMPLOYEE)
+
+5. To find those employees who report to that manager whose code is 8566. Return ename, empno and salary.
+
+SELECT ename,empno,salary FROM tbl_employee
+where manager=8566
+
+6. To find all those employees who work in the Marketing department. Return deptno, ename, job, and dname.
+
+SELECT	e.deptno,e.ename, e.job, d.dname from tbl_employee e join tbl_department d on e.deptno=d.deptno
+where dname='Marketing'
+
+
+7. To find the employee whose salary is 5000 and reporting person’s ID is 8566. Return all fields.
+
+SELECT e.* FROM TBL_EMPLOYEE e
+WHERE SALARY='5000' AND empno in (select manager from tbl_employee where empno=8566)
+
+8. To find those employees whose ID matches any of the numbers 8566, 8884 and 8521. Return all the fields.
+
+SELECT * FROM TBL_EMPLOYEE
+WHERE EMPNO IN (8566,8884,8521)
+
+
+9. To find those employees whose salary falls within the range of the smallest salary and 2500. Return all the fields.
+
+SELECT * FROM TBL_EMPLOYEE
+WHERE SALARY  BETWEEN (SELECT MIN(SALARY) FROM TBL_EMPLOYEE ) AND 2500
+
+10. To find those employees who get second-highest salary. Return all the fields of the employees.
+
+SELECT * FROM TBL_EMPLOYEE WHERE
+SALARY IN (
+SELECT MAX(SALARY)  FROM TBL_EMPLOYEE
+WHERE SALARY < (SELECT MAX(SALARY) FROM TBL_EMPLOYEE))
+
+
+11. To find those employees who earn more than the average salary and work in the same department as an employee whose ename contains the letter 'M'.
+
+SELECT * FROM TBL_EMPLOYEE WHERE SALARY>(SELECT AVG(SALARY) FROM
+TBL_EMPLOYEE) AND DEPTNO IN (SELECT DEPTNO FROM TBL_EMPLOYEE WHERE
+ENAME LIKE '%M%')
+
+12. To find those employees whose department is located at ‘Chennai’. Return ename, empno, job.
+
+
+SELECT ename,empno,job from TBL_employee WHERE DEPTNO IN(SELECT DEPTNO
+FROM TBL_DEPARTMENT WHERE LOC='Chennai')
+
+13. To find those employees whose salary is lower than that of employees whose job title is ‘Analyst’. Return empno, ename, job.
+
+SELECT EMPNO,ENAME,JOB FROM TBL_EMPLOYEE
+WHERE SALARY < (SELECT MIN(SALARY) FROM TBL_EMPLOYEE WHERE JOB='ANALYST')
+
+14. To find those employees whose salary is lower than that of employees whose job title is 'Analyst'. Exclude employees of Job title ‘Analyst’. Return empno, ename, job.
+
+SELECT EMPNO,ENAME,JOB FROM TBL_EMPLOYEE
+WHERE SALARY < (SELECT MAX(SALARY) FROM TBL_EMPLOYEE WHERE JOB='ANALYST') AND JOB NOT IN ('ANALYST')
+
+
+15. To calculate total salary of the departments where at least one employee works. Return deptno, total salary.
+
+SELECT DEPTNO,SUM(SALARY) AS TOTALSALARY FROM TBL_EMPLOYEE
+GROUP BY DEPTNO
+
+
+16. To display the empno, ename, salary and the SalaryStatus column with a title HIGH and LOW respectively for those employees whose salary is more than and less than the average salary of all employees.
+
+SELECT empno, ename, salary ,
+CASE WHEN SALARY  > (SELECT AVG(SALARY) FROM tbl_EMPLOYEE) THEN 'HIGH' ELSE 'LOW'
+END AS SALARYSTATUS FROM TBL_EMPLOYEE
+
+17. Find only those departments who have employees.
+
+SELECT * FROM TBL_department
+WHERE DEPTNO IN (SELECT DEPTNO FROM TBL_EMPLOYEE)
+
+18. Find the employees who earn the highest salary in each department.
+
+SELECT * FROM tbl_EMPLOYEE WHERE SALARY IN(SELECT MAX(SALARY)
+FROM tbl_EMPLOYEE GROUP BY (DEPTNO))
+
+19. To find those employees whose salaries exceed 50% of their department's total salary bill. Return ename'.
+
+SELECT * FROM TBL_EMPLOYEE AS A
+WHERE SALARY > SOME(SELECT 0.5*SUM(SALARY) FROM TBL_EMPLOYEE B WHERE A.DEPTNO=B.DEPTNO GROUP BY DEPTNO)
+
+
+20. To find those employees who joined after the employee whose ID is 8566. Return ename and hiredate.
+
+SELECT * FROM TBL_EMPLOYEE
+WHERE HIREDATE > (SELECT hiredate FROM tbl_EMPLOYEE WHERE EMPNO=8566)
+
+
