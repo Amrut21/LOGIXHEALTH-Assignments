@@ -1,0 +1,142 @@
+--MULTI STATEMENT TVF
+
+1)
+CREATE FUNCTION fn_getemployeedetbyempno(
+@emp int
+)
+returns @employeetable table(emp int,ename varchar(40),job varchar(45),manager int,hiredate date,salary int,commission int,deptno int)
+AS
+begin
+insert into @employeetable 
+select * from tbl_EMPLOYEE where empno= @emp;
+return
+end;
+
+select * from fn_getemployeedetbyempno(8888)
+
+2)
+
+CREATE FUNCTION fn_updateempsalary(
+@emp int
+)
+returns @employeetable table(emp int,ename varchar(40),job varchar(45),manager int,hiredate date,salary int,commission int,deptno int,insereced_salary int )
+AS
+begin
+insert into @employeetable 
+select *,salary+salary*0.5 from tbl_EMPLOYEE where empno= @emp;
+return
+end;
+
+select * from fn_updateempsalary(8888)
+
+
+
+3)
+
+CREATE FUNCTION fn_updateempdept()
+returns @employeetable table(emp int,ename varchar(40),job varchar(45),manager int,hiredate date,salary int,commission int,deptno int )
+AS
+begin
+insert into @employeetable 
+select * from tbl_EMPLOYEE;
+
+
+update @employeetable
+set deptno=40
+
+return
+end;
+
+select * from fn_updateempdept();
+
+
+5)
+
+CREATE FUNCTION fn_getsalarybetween(
+@sal1 integer,
+@sal2 integer
+)
+returns @emptable table (emp int,ename varchar(40),job varchar(45),manager int,hiredate date,salary int,commission int,deptno int)
+as
+begin
+insert into @emptable
+select * from tbl_EMPLOYEE
+where salary between @sal1 and @sal2;
+return
+end;
+
+SELECT * FROM fn_getsalarybetween(2000,100000);
+
+6)
+
+CREATE FUNCTION fn_maxsalary()
+returns @emptable table (emp int,ename varchar(40),job varchar(45),manager int,hiredate date,salary int,commission int,deptno int)
+as
+begin
+insert into @emptable
+select * from tbl_EMPLOYEE 
+where salary = (select max(salary) from tbl_EMPLOYEE)
+return
+end;
+
+SELECT * FROM fn_maxsalary();
+
+7)
+CREATE FUNCTION fn_minsalary1()
+returns @emptable table (emp int,ename varchar(40),job varchar(45),manager int,hiredate date,salary int,commission int,deptno int)
+as
+begin
+insert into @emptable
+select * from tbl_EMPLOYEE 
+where salary = (select min(salary) from tbl_EMPLOYEE)
+return
+end;
+
+SELECT * FROM fn_minsalary1();
+
+
+8)
+
+CREATE function fn_managredetails(@emp integer)
+RETURNS @emptable table (manager int)
+as
+begin
+insert into @emptable
+select manager from tbl_EMPLOYEE
+where empno = @emp;
+return
+end
+
+SELECT * FROM fn_managredetails(8888)
+
+
+9)
+
+CREATE FUNCTION fn_getsalarybyempno(
+@emp int
+)
+returns @employeetable table(salary int)
+AS
+begin
+insert into @employeetable 
+select salary from tbl_EMPLOYEE where empno = @emp;
+return
+end;
+
+select * from fn_getsalarybyempno(8888)
+
+
+10)
+
+CREATE FUNCTION fn_getjobbyempno(
+@emp int
+)
+returns @employeetable table(job varchar(45))
+AS
+begin
+insert into @employeetable 
+select job from tbl_EMPLOYEE where empno = @emp;
+return
+end;
+
+select * from fn_getjobbyempno(8888)

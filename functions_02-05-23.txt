@@ -1,0 +1,204 @@
+--Task 1
+
+-- SCALAR FUNCTIONS
+1)
+
+CREATE FUNCTION fn_commissionnotnullCOUNT()  
+RETURNS INTEGER  
+AS  
+BEGIN  
+RETURN (SELECT COUNT(COMMISSION) FROM TBL_EMPLOYEE WHERE commission is not null)  
+END 
+
+SELECT dbo.fn_commissionnotnullCOUNT()  
+
+2)
+CREATE FUNCTION fn_countofdept(@dept INTEGER)  
+RETURNS INTEGER  
+AS  
+BEGIN  
+RETURN (SELECT COUNT(*) FROM tbl_EMPLOYEE where deptno=@dept)  
+end  
+
+SELECT dbo.fn_countofdept(10)
+
+3)
+CREATE FUNCTION fn_getcount()  
+RETURNS INTEGER  
+AS  
+BEGIN  
+RETURN (SELECT COUNT(*) FROM tbl_employee)  
+END
+
+SELECT dbo.fn_getcount()
+
+4)
+CREATE FUNCTION fn_getmaxsalary1()  
+RETURNS INTEGER  
+AS  
+BEGIN  
+RETURN (SELECT MAX(salary) FROM tbl_EMPLOYEE)  
+END;
+
+SELECT dbo.fn_getmaxsalary1()
+
+5)
+
+CREATE FUNCTION fn_getmaxsalarydept(@dept INTEGER)  
+RETURNS INTEGER  
+AS  
+BEGIN  
+RETURN (SELECT MAX(salary) FROM tbl_EMPLOYEE where deptno=@dept)  
+END;
+
+SELECT dbo.fn_getmaxsalarydept(10)
+
+6)
+
+CREATE FUNCTION fn_getminsalary()  
+RETURNS INTEGER  
+AS  
+BEGIN  
+RETURN (SELECT min(salary) FROM tbl_EMPLOYEE)  
+END;
+
+SELECT dbo.fn_getminsalary()
+
+7)
+
+CREATE FUNCTION fn_getminsalarydept(@dept INTEGER)  
+RETURNS INTEGER  
+AS  
+BEGIN  
+RETURN (SELECT Min(salary) FROM tbl_EMPLOYEE where deptno=@dept)  
+END;
+
+SELECT dbo.fn_getminsalarydept(20)
+
+8)
+CREATE FUNCTION getdname(@dept INTEGER)  
+RETURNS VARCHAR(45)  
+AS  
+BEGIN  
+RETURN (SELECT dname FROM tbl_department where deptno=@dept )  
+end
+
+SELECT dbo.getdname(10)
+
+9)
+CREATE FUNCTION getLocation(@loc integer)  
+RETURNS VARCHAR(45)  
+AS  
+BEGIN  
+RETURN (SELECT LOC FROM tbl_department d,tbl_EMPLOYEE e where e.deptno=d.deptno and empno=@loc )  
+END
+
+SELECT dbo.getLocation(8888)
+
+10)
+CREATE FUNCTION getmgr(@empno INTEGER)  
+RETURNS INTEGER  
+AS  
+BEGIN  
+RETURN (SELECT manager from tbl_EMPLOYEE where empno=@empno )  
+END
+
+select dbo.getmgr(8888)
+
+--INTLINE TABLE VALED FUNCTION
+
+1)
+CREATE FUNCTION fn_getalldetails(@emp INTEGER)  
+RETURNS TABLE  
+AS  
+RETURN (SELECT * FROM tbl_EMPLOYEE where empno=@emp)
+
+SELECT * FROM dbo.fn_getalldetails(8888)
+
+2)
+CREATE FUNCTION fn_getbetweensalary(@sal1 integer,@sal2 integer)  
+RETURNS TABLE  
+AS  
+RETURN (SELECT * FROM tbl_EMPLOYEE where salary between @sal1 and @sal2) 
+
+SELECT * FROM fn_getbetweensalary(2000,8000)
+
+3)
+
+CREATE FUNCTION fn_getdeptdetails(@deptno integer)  
+returns table  
+as  
+return (select * from tbl_department where deptno=@deptno)
+
+SELECT * FROM fn_getdeptdetails(20)
+
+4)
+CREATE FUNCTION fn_getempdetailsbased_on_dname(@dname VARCHAR)  
+RETURNS TABLE  
+AS  
+RETURN (SELECT e.*,dname from tbl_employee e join tbl_department d on e.deptno=d.deptno  
+where dname=@dname)
+
+SELECT * FROM fn_getempdetailsbased_on_dname('Chennai')
+
+5)
+
+
+CREATE FUNCTION fn_getempno(@sal integer)  
+RETURNS TABLE   
+AS  
+RETURN (select * from tbl_EMPLOYEE where salary=@sal)
+
+SELECT * FROM fn_getempno(800)
+
+6)
+
+CREATE FUNCTION fn_gethighersalary(@empno INTEGER)  
+RETURNS TABLE  
+AS  
+RETURN (SELECT * FROM TBL_EMPLOYEE  
+WHERE SALARY > (SELECT SALARY FROM TBL_EMPLOYEE WHERE EMPNO=@empno ));
+
+SELECT * FROM  fn_gethighersalary(8888)
+
+7)
+
+CREATE FUNCTION fn_getminsalary1(@empno INTEGER)  
+RETURNS TABLE  
+AS  
+RETURN (SELECT * FROM TBL_EMPLOYEE  
+WHERE SALARY < (SELECT SALARY FROM TBL_EMPLOYEE WHERE EMPNO=@empno ));  
+
+SELECT * FROM fn_getminsalary1(8888)
+
+8)
+CREATE FUNCTION fn_getsal_add_commission()  
+RETURNS TABLE  
+AS  
+RETURN (SELECT *,iif(commission is not null,commission+salary,salary) as total from tbl_EMPLOYEE)  
+
+SELECT * FROM fn_getsal_add_commission()
+
+9)
+
+  
+CREATE FUNCTION fn_getsalary(@salary INTEGER)  
+RETURNS TABLE  
+AS  
+RETURN (SELECT * FROM tbl_employee WHERE salary > @salary );
+
+SELECT * FROM fn_getsalary(800)
+
+
+10)
+CREATE FUNCTION getLocation_of_emp(@loc VARCHAR(45))  
+RETURNS TABLE  
+AS  
+RETURN (SELECT D.* FROM tbl_department d,tbl_EMPLOYEE e where e.deptno=d.deptno and empno=@loc )  
+
+SELECT * FROM getLocation_of_emp(8888)
+
+--TASK 2
+
+SELECT a.*,d.dname FROM fn_getsalary(800) a,tbl_department d
+where a.deptno=d.deptno
