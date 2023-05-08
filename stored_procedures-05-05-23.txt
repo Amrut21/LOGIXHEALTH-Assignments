@@ -1,0 +1,263 @@
+--Without Input And OutPut parameters
+1)
+CREATE PROCEDURE spgetEmployees
+as
+begin
+select * from tbl_EMPLOYEE
+end
+
+spgetEmployees
+
+2)
+CREATE PROCEDURE spgetclerkdetails
+as
+begin
+select * from tbl_EMPLOYEE where job='CLERK'
+end
+
+spgetclerkdetails
+
+3)
+CREATE PROCEDURE spgetdept20
+AS
+BEGIN
+SELECT * FROM tbl_EMPLOYEE where deptno=20
+END
+
+spgetdept20
+
+4)
+CREATE PROCEDURE spgetmaxsalary1
+AS
+BEGIN
+SELECt MAX(SALARY) FROM TBL_employee
+end
+
+spgetmaxsalary1
+
+5)
+CREATE PROCEDURE getminsalary1
+as
+begin
+select min(salary) from tbl_EMPLOYEE
+end
+
+getminsalary1
+
+--With Input And without OutPut parameters
+
+
+1)
+CREATE PROCEDURE spchangedeptno
+@emp int,
+@dept int
+as
+begin
+update tbl_EMPLOYEE
+set deptno=@dept
+where empno=@emp
+
+end
+
+select * from tbl_EMPLOYEE
+spchangedeptno 8369,20
+
+2)
+CREATE PROCEDURE spgetempdetails
+@job varchar(45),
+@dept int
+AS
+BEGIN
+SELECT * from tbl_EMPLOYEE where job=@job and deptno=@dept
+END
+
+spgetempdetails 'CLERK','30'
+
+3)
+CREATE PROCEDURE spgetsalary
+@sal1 int,
+@sal2 int
+AS
+BEGIN
+SELECT * FROM tbl_EMPLOYEE
+where salary between @sal1 and @sal2
+END
+
+
+spgetsalary 0,10000
+
+4)
+CREATE PROC spdeptloc
+@emp int 
+as
+begin
+select loc from tbl_department d,tbl_EMPLOYEE e 
+where d.deptno=e.deptno and e.empno=@emp
+end
+
+spdeptloc 8888
+
+
+5)
+create procedure spgetempbydept
+@dept int
+as
+begin
+select * from tbl_EMPLOYEE
+where deptno=@dept
+end
+
+spgetempbydept 20
+
+
+--Without Input And with OutPut parameters
+1)
+CREATE PROCEDURE GetEmployeeCount1
+    @count INT OUTPUT
+AS
+BEGIN
+    SELECT @count = COUNT(*) FROM tbl_employee
+END
+
+DECLARE @count INT
+EXEC GetEmployeeCount1 @count OUTPUT
+SELECT @count
+
+2)
+CREATE PROCEDURE GetMaxSalary
+    @max_salary DECIMAL(10,2) OUTPUT
+AS
+BEGIN
+    SELECT @max_salary = MAX(salary) FROM TBL_employee
+END
+
+
+DECLARE @max_salary DECIMAL(10,2)
+EXEC GetMaxSalary @max_salary OUTPUT
+SELECT @max_salary
+
+3)
+
+CREATE PROC SPMINSALARY
+@minsalary int output
+as
+begin
+select @minsalary=min(salary)  from tbl_EMPLOYEE
+end
+
+declare @minsalary int
+exec spminsalary @minsalary output 
+select @minsalary
+
+4)
+Create PROC spgettotal
+@sum int output
+as
+begin
+select @sum=sum(salary) from tbl_employee
+end
+
+
+declare @sum int
+exec spgettotal @sum OUTPUT
+SELECT @sum
+
+5)
+ALTER PROCEDURE GetTop5HighestPaidEmployees1
+    @employee_name VARCHAR(25) OUTPUT
+AS
+BEGIN
+    SELECT TOP 5  ename FROM tbl_employee ORDER BY salary DESC
+END
+
+DECLARE @employee_name int
+EXEC @employee_name= GetTop5HighestPaidEmployees1
+SELECT @employee_name
+
+
+
+
+
+--WITH INTPUT AND OUTPUT parameters
+
+
+1)
+CREATE PROCEDURE getempnamebyid
+@EMPID INTEGER,
+@name varchar(45) OUTPUT
+AS
+BEGIN
+SELECT @name = ENAME from tbl_EMPLOYEE where empno=@EMPID
+END
+
+DEClaRE @emp VARCHAR(45)
+EXEC  getempnamebyid 8888, @emp OUTPUT
+SELECT @emp
+
+
+2)
+CREATE PROCEDURE GetEmployeeCountByDepartment
+    @dept_id INT,
+    @count INT OUTPUT
+AS
+BEGIN
+    SELECT @count = COUNT(*) FROM tbl_EMPLOYEE WHERE deptno = @dept_id
+END
+
+DECLARE @count INT
+EXEC GetEmployeeCountByDepartment 20, @count OUTPUT
+SELECT @count
+
+
+3)
+CREATE PROCEDURE SPGETEMPLOYEEBYJOB
+@job varchar(45),
+@emp int output
+AS
+BEGIN
+SELECT @emp=count(empno) from tbl_EMPLOYEE where job=@job
+end
+
+DECLARE @emp int
+EXEC SPGETEMPLOYEEBYJOB 'CLERK' , @EMP output
+select @emp
+
+4)
+
+CREATE PROC getsalarybyemp
+@emp int,
+@salary int output
+AS
+BEGIN
+SELECT @salary=salary from tbl_EMPLOYEE where empno=@emp
+end
+
+declare @sal int
+EXEC getsalarybyemp 8888,@sal output
+select @sal
+
+
+
+5)
+
+CREATE PROC getlocbyid
+@id int,
+@loc varchar(45) output
+as
+begin
+SELECT @loc=loc from tbl_department d,tbl_EMPLOYEE e where  d.deptno=e.deptno and empno=@id
+end
+
+DECLARE @LOC VARCHAR(45)
+EXEC getlocbyid 8888,@LOC OUTPUT
+SELECT @LOC
+
+
+
+
+
+
+
+
+
+
