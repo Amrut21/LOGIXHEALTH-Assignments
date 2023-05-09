@@ -1,0 +1,210 @@
+SELECT * FROM TBL_EMPLOYEE
+
+1)
+
+CREATE FUNCTION fn_empall()
+returns table
+as
+return (SELECT * FROM tbl_EMPLOYEE)
+
+select * from fn_empall()
+
+
+2)
+CREATE FUNCTION fn_addrecords()
+RETURNS @employeeTable TABLE 
+(eno int, employeeName varchar(50),job VARCHAR(30),manager INT,hiredate DATE,salary int,commission INT,deptno int)
+AS
+BEGIN
+INSERT INTO @employeeTable
+SELECT * FROM tbl_EMPLOYEE
+INSERT INTO @employeeTable VALUES(8088, 'Ramesh', 'CLERK', 8789, '2022-08-09', 4500.00, NULL, 10)
+RETURN
+END 
+SELECT * FROM fn_addrecords();
+
+
+3)
+CREATE FUNCTION FN_COUNTEMP()
+RETURNS INT
+AS
+BEGIN
+RETURN (SELECT COUNT(*)  FROM tbl_EMPLOYEE)
+END
+
+select dbo.FN_COUNTEMP()
+
+4)
+CREATE FUNCTION fn_deptemp(@deptno int)
+returns table
+as
+return (SELECT * FROM tbl_EMPLOYEE where deptno=@deptno)
+
+select * from fn_deptemp(30)
+
+5)
+
+CREATE FUNCTION fn_empall1()
+returns table
+as
+return (SELECT * FROM tbl_EMPLOYEE)
+
+select * from fn_empall1()
+order by ename
+
+6)
+alter FUNCTION fn_updateemployeesalary()
+returns @employeetable table(empno int,ename varchar(40),job varchar(45),manager int,hiredate date,salary int,commission int,deptno int )
+AS
+BEGIN
+insert into @employeetable 
+select * from tbl_EMPLOYEE;
+update @employeetable set SALARY=500 WHERE empno=(SELECT MAX(EMPNO) FROM @employeetable);
+return
+end;
+
+select * from fn_updateemployeesalary()
+
+7)
+
+alter FUNCTION fn_deletelastEmp()
+returns @employeetable table(empno int,ename varchar(40),job varchar(45),manager int,hiredate date,salary int,commission int,deptno int )
+AS
+BEGIN
+insert into @employeetable 
+select * from tbl_EMPLOYEE;
+DELETE FROM @employeetable WHERE empno=(SELECT MAX(EMPNO) FROM @employeetable);
+return
+end;
+select * from fn_deletelastEmp();
+
+
+
+
+
+
+
+TABLE:PRODUCTS,SALES
+
+
+
+CREATE TABLE PRODUCTS 
+(product_code varchar(45) PRIMARY KEY,product_name varchar(45),price int,quantity_remanining int,quantity_sold int)
+
+
+INSERT INTO PRODUCTS VALUES ('P1','iPhone 13 Pro Max',1200,5,195) ,('P2','Airpods pro',279,10,90),
+('P3','MacBook Pro 16',5000,2,48),('P4','iPad Air',650,1,9)
+
+
+
+CREATE TABLE SALES 
+(order_id int primary key,
+order_date date,product_code varchar(45)
+references PRODUCTS( product_code ) ,
+quantity_ordered int,sale_price int)
+
+INSERT INTO SALES VALUES
+(1,'2022-01-10','P1',100,120000),
+(2,'2022-01-20','P1',50,60000),
+(3,'2022-02-05','P1',45,540000),
+(4,'2022-01-15','P2',50,13950),
+(5,'2022-03-25','P2',40,11160),
+(6,'2022-02-25','P3',10,50000),
+(7,'2022-03-15','P3',10,50000),
+(8,'2022-03-25','P3',20,100000),
+(9,'2022-04-21','P3',8,40000),
+(10,'2022-04-27','P4',9,5850)
+
+
+SELECT * FROM PRODUCTS
+SELECT * FROM SALES
+
+
+
+2. For every given product and the quantity, 
+check if the product is available based on the required quantity. 
+If available then modify the database tables accordingly.
+
+
+
+1)
+CREATE PROCEDURE sp_iPhone13 
+AS
+BEGIN
+DECLARE @product_code VARCHAR(20)
+SET @product_code = 'P1'
+DECLARE @quantity_remaining INT
+DECLARE @quantity_sold INT
+SELECT @quantity_remaining = quantity_remanining, @quantity_sold = quantity_sold
+FROM PRODUCTS WHERE product_code = @product_code
+IF (@quantity_remaining < 1)
+BEGIN
+DECLARE @error_message VARCHAR(100)
+SET @error_message = 'CAn only sell one '
+RAISERROR(@error_message, 16, 1)
+END
+ELSE
+BEGIN
+UPDATE PRODUCTS SET quantity_remanining = @quantity_remaining - 1,
+quantity_sold = @quantity_sold + 1 WHERE product_code = @product_code
+
+DECLARE @order_id INT
+SELECT @order_id = MAX(order_id) + 1 FROM SALES;
+
+INSERT INTO SALES (order_id,order_date, product_code, quantity_ordered, sale_price)
+VALUES (@order_id,GETDATE(), @product_code, 1, (SELECT price FROM PRODUCTS WHERE product_code = @product_code))
+END
+END
+
+
+EXEC sp_iPhone13
+SELECT * FROM PRODUCTS;
+SELECT * FROM SALES;
+
+
+2)
+
+ALTER PROCEDURE quantitycheck
+@code varchar(45),
+@qtyrem int
+as
+begin
+
+
+DECLARE @proavailable int
+select @proavailable=quantity_remanining from  PRODUCTS P
+where product_code=@code
+
+if(@proavailable<@qtyrem)
+BEGIN
+RAISERROR('Not enough stock available',16,1);
+end
+
+else
+BEGIN
+BEGIN TRAN
+
+UPDATE PRODUCTS
+set quantity_remanining = (quantity_remanining - @qtyrem) WHERE product_code = @code
+
+declare @max int
+select @max = case when max(order_id) is null then 0 else max(order_id) end
+from SALES
+
+
+SET @MAX=@MAX +1
+INSERT INTO SALES VALUES (@MAX,getdate(),@CODE,@qtyrem,@qtyrem*(SELECT price from PRODUCTS where product_code =@code ));
+if(@@ERROR <> 0)
+ROLLBACK TRAN
+ELSE
+COMMIT TRAN
+END 
+END
+
+quantitycheck 'P1',2
+
+
+
+
+
+
