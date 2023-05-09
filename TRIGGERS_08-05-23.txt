@@ -1,0 +1,89 @@
+SELECT * FROM Orders
+CREATE TABLE ORDERS(
+orderID int,
+item varchar(45),
+amount int
+)
+
+CREATE TABLE tbl_orders_audit (
+id int identity,AuditData text
+)
+
+
+
+ALTER TRIGGER tr_tbl_Orders_forInsert
+on Orders
+FOR INSERT
+AS
+BEGIN
+DECLARE @Id INT
+SELECT @ID = orderId from inserted;
+INSERT INTO tbl_orders_audit 
+values('NEW ORDER WITH ID ' + CAST (@ID AS VARCHAR) + ' IS ADDED AT ' + CAST(GETDATE() AS VARCHAR))
+END
+
+INSERT INTO ORDERS VALUES (3,'CAMERA',300)
+
+SELECT * FROM ORDERS
+SELECT * FROM tbl_orders_audit
+
+--DELETE TRIGGER
+
+ALTER TRIGGER tr_tbl_orders_Fordelete
+ON orders
+FOR DELETE
+AS
+BEGIN
+DECLARE @ID INT
+SELECT @ID= orderId FROM DELETED
+INSERT INTO tbl_orders_audit VALUES
+('AN EXISTING ORDER ID ' + CAST(@ID as varchar) + ' GOT DELETED at ' + CAST(GETDATE() AS VARCHAR) )
+END
+
+DELETE FROM ORDERS WHERE orderid=3
+
+
+alter TRIGGER tr_tbl_employee_forupdate
+on ORDERS
+FOR UPDATE
+AS
+BEGIN
+DECLARE @ORDERID int
+DECLARE @oldItem varchar(45), @NewItem varchar(45)
+DECLARE @oldamount int, @newamount int
+
+DECLARE @AUDITtext VARCHAR(1000);
+
+SELECT * INTO #TEMPTABLE FROM INSERTED
+
+WHILE(EXISTS(SELECT orderid from #TEMPTABLE))
+BEGIN
+SET @AUDITTEXT = ''
+SELECT TOP 1 @ORDERID = orderID , @Newitem = item ,@newamount = amount
+from #TEMPTABLE
+
+SELECT  @oldItem = item ,@oldamount = amount
+from deleted WHERE orderID = @ORDERID
+
+SET @AUDITTEXT = 'ORDERS WITH ORDERID ' +CAST(@ORDERID as varchar) + ' changed '
+
+if(@oldItem <> @NewItem)
+set @audittext = @audittext + ' item name from  ' + @oldItem + '  to  ' + @NewItem
+
+if(@oldamount <> @newamount)
+set @AUDITtext = @audittext + ' amount was changed from ' + @oldamount + ' to ' + @newamount
+
+insert into tbl_orders_audit values(@AUDITtext)
+
+delete from #TEMPTABLE where orderid = @ORDERID
+end
+end
+
+
+UPDATE  ORDERS
+SET item='SPEAKER'
+where orderid = 2
+
+
+SELECT * FROM Orders
+SELECT * FROM tbl_orders_audit
