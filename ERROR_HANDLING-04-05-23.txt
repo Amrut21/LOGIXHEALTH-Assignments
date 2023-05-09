@@ -1,0 +1,134 @@
+CREATE TABLE tblItemdetails
+(Itemno int,itemname varchar(45),price int,available INT)
+
+INSERT INTO tblItemdetails values(2,'Oil',100,800)
+
+create table tblSoldItemDetails(SIDid int primary key,ItemId int,sold int)
+
+SELECT * FROM tblItemdetails
+SELECT * FROM tblSoldItemDetails
+
+
+CREATE PROCEDURE solditem
+@Item int,
+@Qtytosell int
+as
+begin
+	DECLARE @availablestock int
+	SELECT @availablestock=available from tblItemdetails where  Itemno=@Item
+
+if(@availablestock<@Qtytosell)
+BEGIN
+RAISERROR('STOCK IS NOT AVALILABLE',16,1)
+END
+ELSE
+BEGIN 
+BEGIN TRAN
+UPDATE tblItemdetails
+SET available = available - @Qtytosell 
+WHERE Itemno=@Item
+
+DECLARE @Maximum int
+
+SELECT @Maximum = CASE WHEN MAX(SIDid) IS NULL THEN 0 ELSE MAX(sidID) end FROM tblSoldItemDetails
+
+SET @Maximum=@Maximum+1 
+
+INSERT INTO tblSoldItemDetails VALUES (@Maximum,@Item,@Qtytosell) 
+if(@@error <> 0)
+rollback tran
+else
+commit tran
+end
+end
+
+
+solditem 1,10
+ 
+SELECT * FROM tblItemdetails
+  
+SELECT * FROM tblSoldItemDetails
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+CREATE TABLE tblItemdetails
+(Itemno int,itemname varchar(45),price int,available INT)
+
+INSERT INTO tblItemdetails values(2,'Oil',100,800)
+
+create table tblSoldItemDetails(SIDid int primary key,ItemId int,sold int)
+
+SELECT * FROM tblItemdetails
+SELECT * FROM tblSoldItemDetails
+
+
+ALTER PROCEDURE solditem1
+@Item int,
+@Qtytosell int
+as
+begin
+	DECLARE @availablestock int
+	SELECT @availablestock=available from tblItemdetails where  Itemno=@Item
+
+if(@availablestock<@Qtytosell)
+BEGIN
+RAISERROR('STOCK IS NOT AVALILABLE',16,1)
+END
+ELSE
+BEGIN
+BEGIN try
+BEGIN TRAN
+UPDATE tblItemdetails
+SET available = available - @Qtytosell 
+WHERE Itemno=@Item
+
+DECLARE @Maximum int
+
+SELECT @Maximum = CASE WHEN MAX(SIDid) IS NULL THEN 0 ELSE MAX(sidID) end FROM tblSoldItemDetails
+
+SET @Maximum=@Maximum+1 
+INSERT INTO tblSoldItemDetails VALUES (@Maximum,@Item,@Qtytosell) 
+
+commit tran
+END TRY
+BEGIN CATCH
+rollback tran
+END CATCH
+end
+END
+
+
+solditem1 2,10
+ 
+SELECT * FROM tblItemdetails
+  
+SELECT * FROM tblSoldItemDetails
+
+
+
