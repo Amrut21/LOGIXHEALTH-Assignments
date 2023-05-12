@@ -1,0 +1,563 @@
+--CREATE TABLE STARTS
+CREATE TABLE tbl_Customer(
+	CustomerID int IDENTITY PRIMARY KEY,
+    FirstName varchar(50) NOT NULL,
+	LastName varchar(50) NOT NULL,
+	Address varchar(50) NOT NULL,
+	City varchar(50) NOT NULL,
+	State varchar(50) NOT NULL,
+	ZipCode varchar(40) NOT NULL,
+	ContactNumber varchar(50) NOT NULL UNIQUE
+	)
+
+CREATE TABLE Login
+(
+UserName VARCHAR(45) PRIMARY KEY,
+CustomerId INT REFERENCES tbl_Customer(CustomerId),
+Password VARCHAR(45) NOT NULL,
+EMAIL VARCHAR(45)NOT NULL
+)
+
+CREATE TABLE Tbl_Restaurant
+(
+ RestaurantId  INT IDENTITY PRIMARY KEY,
+ RestaurantName VARCHAR(45) NOT NULL,
+ RestaurantAddress VARCHAR(45) NOT NULL,
+ City VARCHAR(45) NOT NULL,
+ State VARCHAR(45) NOT NULL,
+ Zipcode	INT NOT NULL,
+ OperatingHrs VARCHAR(45) NOT NULL,
+ OperatingDays VARCHAR(45) NOT NULL
+)
+
+CREATE TABLE Tbl_FoodItems
+(
+FoodItemId INT IDENTITY PRIMARY KEY,
+FoodName VARCHAR(45) NOT NULL,
+Price INT NOT NULL,
+Category VARCHAR(45) NOT NULL,
+RestaurantId  INT REFERENCES Tbl_Restaurant(RestaurantId),
+FoodDescription VARCHAR(45) NOT NULL
+)
+
+CREATE TABLE Tbl_Card
+(
+CardId INT IDENTITY PRIMARY KEY ,
+CustomerId INT REFERENCES tbl_Customer(CustomerId),
+CardNumber INT NOT NULL,
+CardHolderName VARCHAR(45) NOT NULL,
+ExpiryDate DATE NOT NULL,
+CardType VARCHAR(45) NOT NULL,
+CVV INT NOT NULL
+)
+
+CREATE TABLE Tbl_Promocode
+(
+Promocode VARCHAR(45) PRIMARY KEY,
+StartDate DATE,
+EndDate DATE,
+Discount int
+)
+
+CREATE TABLE Tbl_Order(
+OrderID INT IDENTITY(1000,1) PRIMARY KEY,
+CustomerId INT REFERENCES tbl_Customer(CustomerId),
+RestaurantId  INT REFERENCES Tbl_Restaurant(RestaurantId),
+FoodItemId INT REFERENCES Tbl_FoodItems(FoodItemId),
+Quantity INT NOT NULL,
+FoodItemAmt INT,
+OrderInstruction VARCHAR(45),
+OrderStatus VARCHAR(45),
+OrderDate DATE,
+DeliverId INT REFERENCES Tbl_Delivery(DeliverId)
+)
+
+CREATE TABLE Tbl_Delivery
+(
+DeliverId INT PRIMARY KEY,
+DeliveryStatus VARCHAR(45),
+DeliveryStaffId INT REFERENCES Tbl_DeliveryStaFf(DeliveryStaffId),
+DeliveryAddress VARCHAR(45) NOT NULL,
+EstimatedTimeOfDelivery VARCHAR(45) NOT NULL,
+DeliveryInstruction VARCHAR(45)
+)
+
+CREATE TABLE Tbl_DeliveryStaff(
+DeliveryStaffId INT PRIMARY KEY,
+Fname VARCHAR(45),
+Lname VARCHAR(45),
+Phone BIGINT
+)
+
+CREATE TABLE tbl_Bill
+(
+BillId INT PRIMARY KEY,
+OrderID INT REFERENCES tbl_Order(OrderId),
+TaxAmount INT,
+TipAmount INT,
+DeliveryCharges INT,
+PROMOCODE INT,
+Discounted INT,
+TotalAmount INT NOT NULL,
+)
+
+CREATE TABLE tbl_Review
+(
+FeedbackId INT PRIMARY KEY,
+REVIEWS VARCHAR(90),
+RATINGS INT,
+RDATE DATE,
+CustomerId INT REFERENCES tbl_Customer(CustomerId),
+RestaurantId  INT REFERENCES Tbl_Restaurant(RestaurantId),
+FoodItemId INT REFERENCES Tbl_FoodItems(FoodItemId)
+)
+
+CREATE TABLE TBL_PAYMENTS 
+(PAYMENTID INT IDENTITY(2000,1) PRIMARY KEY,
+CardId INT REFERENCES Tbl_Card(CARDID),
+BillId INT REFERENCES Tbl_bill(BillId),
+CustomerId INT REFERENCES tbl_Customer(CustomerId),
+PaymentStatus VARCHAR(45),
+PaymentType VARCHAR(45),
+PaymentDate DATE
+)
+
+CREATE TABLE INFO
+(INFOID INT IDENTITY(900,1), INFOTEXT VARCHAR(100) )
+
+
+CREATE TABLE INFO_REST
+(INFOID INT IDENTITY(900,1), INFOTEXT VARCHAR(100) )
+
+
+--CREATE TABLE ENDS
+
+--INSERT VALUES STARTS
+
+
+INSERT INTO tbl_Customer 
+VALUES ('Vineet','K','7 West Ave #1','Columbia','SC',29201,803-352-5387),
+('Sailee','A','669 Packerland Dr #1438','Denver','CO',80212,303-404-2210),
+('Charu','B','759 Eldora St','New Haven','CT',6515,203-801-6193),
+('MIHIR','C','5 S Colorado Blvd #449','Bothell','WA',98021,425-986-7573),
+('ARYA','D','944 Gaither Dr','Strongsville','OH',44136,440-989-5826),
+('DIVYA','E','66552 Malone Rd','Plaistow','NH',3865,603-315-6839),
+('ANKUR','F','77 Massillon Rd #822','Satellite Beach','FL',32937,321-518-5938),
+('SACHIN','B','25346 New Rd','New York','NY',10016,212-792-8658),
+('Shwetha','W','60 Fillmore Ave','Huntington Beach','CA',92647,714-584-2237),
+('Priya','T','42744 Hamann Industrial Pky #82','Miami','FL',33155,305-968-9487)
+
+SELECT * FROM tbl_Customer
+
+INSERT INTO Login
+VALUES('Vineet123',1, 'Vinnet123$','vineet123@gmail.com'),
+		('Sailee123',2, 'Sailee123$','sailee123@gmail.com'),
+		('Charu123',3, 'Charu123$','charu123@gmail.com'),
+		('Mihir123',4, 'Mihir123$','mihir123@gmail.com'),
+		('Arya123',5, 'Arya123$','arya123@gmail.com'),
+		('Divya123',6, 'Divya123$','divya123@gmail.com'),
+		('Ankur123',7, 'Ankur123$','ankur123@gmail.com'),
+		('Sachin123',8, 'Sachin123$','sachin123@gmail.com'),
+		('Shwetha123',9, 'Shwetha123$','shwetha123@gmail.com'),
+		('Priya123',10, 'Priya123$','priya123@gmail.com');
+
+SELECT * FROM login
+
+INSERT INTO tbl_Restaurant 
+VALUES	('Chat House'				,'148 Ave NE'			,'Bellevue'	,'Washington',98007,'9AM-9PM'  ,'Mon-Fri'),
+		('Cactus'					,'350 Terry Ave NE'		,'Seattle'	,'Washington',98105,'9AM-11PM' ,'Mon-Sun'),
+		('Serious Pie and Biscuits'	,'401 Westlake Ave N'	,'Seattle'	,'Washington',98109,'9AM-11PM' ,'Mon-Sun'),
+		('The pink door'			,'1919 Post Alley'		,'Seattle'	,'Washington',98109,'11AM-12AM','Mon-Sun'),
+		('Mediterranean Kitchen'	,'103 Bellevue way'		,'Bellevue'	,'Washington',98007,'9AM-12AM' ,'Mon-Sun'),
+		('Taste Of India'			,'121 University Way'	,'Seattle'	,'Washington',98005,'9AM-11PM' ,'Mon-Sun'),
+		('Din Tai Fung'				,'700 Bellevue way'		,'Bellevue'	,'Washington',98007,'9AM-11PM' ,'Mon-Sun'),
+		('Zig Zag Cafe'				,'1501 Western Ave'		,'Bellevue'	,'Washington',98007 ,'9AM-9PM'  ,'Mon-Sun'),
+		('Lola'						,'2000 4th Ave Belltown','Seattle'	,'Washington',98102,'9AM-9PM'  ,'Mon-Sun'),
+		('New'						,'1519 Capital Hill'	,'Seattle'	,'Washington',98109,'9AM-9PM'  ,'Mon-Sun'),
+		('Art Of the Table'			,'3801 Stone Way'		,'Seattle'	,'Washington',98109,'9AM-9PM'  ,'Mon-Sun');
+
+SELECT * FROM tbl_Restaurant
+
+
+
+INSERT into Tbl_FoodItems
+VALUES( 'BRUSCHETTA CON CAPONATA'			, 100,'Dinner', 1 , 'eggplant, tomatoes, celery'),
+	  (  'GRILLED OCTOPUS'					, 5000,'Dinner'	 ,2, 'capers, frisee & olives'),
+	  (  'PIZZA BIANCA'					, 300,'Lunch'	 , 3 , 'individual sized pizza'),
+	  (  'GRILLED ITALIAN SAUSAGE'			,200, 'Dinner'	 , 1 , 'w/fried peppers and onions'),
+	  (  'BUTTERSCOTCH BUDINO'				, 100,'Dessert'	 , 4 , 'tuile cookie'),
+	  (  'PUMPKIN TART'					,150, 'Dessert'	 , 5  , 'toasted meringue'),
+	  (  'The LUXE Burger'					,250, 'Burgers'	 , 2  , 'grilled burger,white truffle cheese'),
+	  (  'Lucky Star Burger'				,500, 'Burgers'	 ,6  , 'grilled burger,smoked gouda cheese'),
+	  (  'Pumpkin Spice Cake'				,1000, 'Dessert'	 , 7  , 'All time favourite cake'),
+	  (  'Chocolate Chip Cookie'			,300, 'Dessert'	 , 3   , 'cane juice, dark chocolate chips'),
+	  (  'Butter Masala Dosa'				,100, 'Breakfast', 8 , 'Rice pancake with potato filling'),
+	  (  'Potato Parantha'					,160, 'Breakfast', 9  , 'whole wheat stuffed bread'),
+	  (  'Paneer Tikka Masala'				,200, 'Lunch'	 , 10 , 'Indian cheese in creamy tomato sauce'),
+	  (  'Kadhai Chicken'					,500, 'Dinner'	 , 11 , 'chicken, peppers with spicy sauce'),
+	  ( 'Gulab Jamun'						,70, 'Dessert'	 , 5  , 'Spongy milky balls with rose scented syrup'),  
+	  (  'Falafel Sandwich'				,100, 'Lunch'	 , 6  , 'Falafel, hummus, romaine, tomatoes, parsley'),
+	  (  'Chicken Kebab Plate'				,400, 'Lunch'	 , 11 , 'Sliced rotisserie chicken, grilled and hummus'),
+	  (  'Gralic Fries'					,100, 'Sides'	 , 7  , 'Seasoned fries, cheese and oregano'),
+	  (  'Beef and Lamb Shawarma Sandwich'	,300, 'Lunch'	 , 10 , 'Sliced lamb mix and tahini'),
+	  (  'Baklawa'							,100, 'Dessert'	 , 9  , 'Layered buttered  pistachio');
+
+SELECT * FROM Tbl_FoodItems
+
+
+INSERT INTO Tbl_Card
+Values(1,1234786,'VineetBagga','2019-01-01','Credit',123),
+	  (2,127692,'Sailee Walke','2019-09-01','Credit',456),
+	  (3,127692,'Charusmitha Deshpande','2020-09-01','Credit',789),
+	  (4,127671,'Mihir Salunke','2019-11-01','Credit',234),
+	  (5,496471,'Arya Soman','2021-11-01','Credit',345),
+	  (6,76666,'Divya Sharma','2020-11-01','Credit',466),
+	  (7,233333,'Ankur Gupta','2019-12-01','Credit',223),
+	  (8,7767676,'Sachin S','2022-11-01','Credit',443),
+	  (9, 63535,'Shwetha K','2021-09-01','Credit',112),
+	  (10, 12763,'Priya Gupta','2020-08-01','Credit',778);
+
+	  SELECT * FROM Tbl_Card
+
+INSERT INTO Tbl_Promocode
+VALUES	('THANKS15', '2018-06-11 09:00:00', '2018-06-15 12:00:00', 15.00),
+		('WELCOME5', '2018-06-11 09:00:00', '2018-06-12 11:00:00', 5.00),
+		('HOLIDAY20', '2018-12-20 09:00:00', '2018-12-30 00:00:00', 20.00),
+		('EXTRA5', '2018-08-30 09:00:00', '2018-09-30 11:00:00', 5.00),
+		('HAPPY10', '2018-05-11 09:00:00', '2018-06-11 11:00:00', 10.00),
+		('NEWYEAR25', '2018-12-25 09:00:00', '2019-01-05 11:00:00', 25.00),
+		('FUN20', '2018-07-11 09:00:00', '2018-07-12 11:00:00', 20.00),
+		('MOTHER20', '2018-05-01 09:00:00', '2018-05-10 11:00:00', 20.00),
+		('FRIDAY15', '2018-04-06 09:00:00', '2018-04-13 11:00:00', 15.00),
+		('EXTRA10', '2018-09-11 09:00:00', '2018-09-12 11:00:00', 10.00);
+
+SELECT * FROM Tbl_Promocode
+
+INSERT into Tbl_DeliveryStaff
+VALUES	(1000,'John'	  ,'Doe'	,2067463524),
+		(1001,'Lee'	  ,'Willams',3129876543),
+		(1002,'David'  ,'Taylor'	,206987433),
+		(1003,'Salim'  ,'Khan'	,2063284597),
+		(1004,'Shawn'  ,'Parker'	,3129876543),
+		(1005,'Sam'	  ,'Kate'	,2069432543),
+		(1006,'Zen'	  ,'Green'	,3129464343),
+		(1007,'Daneil' ,'Brayon'	,3129464343),
+		(1008,'Sandeep','Mishra'	,3129464343),
+		(1009,'Ting'	  ,'Tong'	,3129464343);
+
+SELECT * FROM Tbl_DeliveryStaff
+
+
+INSERT into Tbl_Delivery
+VALUES(7,'Delivered' 		, 1000, '567 John Street,Seattle'		   , '02:00:00','Please give a call on arrival' ),
+	  (9, 'Delivered',1001,'534 Elliot Ave,Seattle'				, '10:00:00','Please do not knock on arrival'	 ),
+	  (10,'Delivered',1002, '567 John Street,Seattle'			 , '08:00:00','Please give a call on arrival' ),
+	  (8,'Delivery Fail',1003, '83rd NE Elliot Ave,Seattle'			, '09:00:00',NULL),
+	  (6,'Delivered', 1004,'567 John Street,Bellevue'				 , '10:00:00',NULL),
+	  (1 ,'Delivered',1005, '112 Fairview Ave, Apt 605,Seattle' 	   , '05:00:00', NULL),
+	  (2 , 'Delivered',1006,'1106 11th Ave NE, Apt 402,Seattle'	, '10:00:00','Please give a call on arrival' ),
+	  (3 , 'Delivered',1007,'431 Desxter Street, Apt 301,Seattle' , '10:00:00',NULL),
+	  (4 , 'Delivery fail',1008,'2122 Howe Street,Apt 701,Seattle'		  ,  '10:00:00','Leave Parcel at reception'),
+	  (5 , 'Delivered',1009,'892 Nelson Street,Bellevue'		, '10:00:00', 'Call on arrival');
+
+	  SELECT * FROM Tbl_Delivery
+	 
+
+INSERT INTO TBL_oRDER 
+VALUES	(1,1,54,10,(SELECT A.PRICE*10 FROM Tbl_FoodItems A WHERE A.FoodItemId=54),'MAKE IT SWEET','Success','2018-06-16 ',1),
+(2,3,55,3,(SELECT A.PRICE*3 FROM Tbl_FoodItems A WHERE A.FoodItemId=55),NULL,'Success','2018-07-21',2),
+(3,4,56,4,(SELECT A.PRICE*4 FROM Tbl_FoodItems A WHERE A.FoodItemId=56),null,'success','2018-07-21',3),
+(4,10,67,4,(SELECT A.PRICE*4 FROM Tbl_FoodItems A WHERE A.FoodItemId=67),'MAKEITSPICY','SUCCESS','2018-05-12',4),
+(1,10,66,4,(SELECT A.PRICE*10 FROM Tbl_FoodItems A WHERE A.FoodItemId=66),NULL,'Success','2018-06-16 ',1)
+
+	SELECT * FROM Tbl_Order
+
+
+
+
+  
+INSERT INTO tbl_Review values
+					  (1,'Amazing',5,'2018-06-18',1,1,54),
+					  (2,'Wonderful',4,'2018-07-21',2,5,55),
+					  (3,'Not so good',2,'2018-05-01',3,2,56),
+					  (4,'Fantastic',5,'2018-02-02',4,6,67),
+					  (5,'Average',1,'2018-11-25',5,3,66)
+					  (6,'GOOD',3,'2018-11-23',5,3,66)
+
+SELECT * FROM tbl_Review
+
+
+
+
+
+INSERT INTO tbl_Bill values 
+	(500,1003,100,10,null,null,0,1110),
+(501,1004,80,0,null,10,10,970),
+(502,1005,90,10,null,null,0,490)
+
+SELECT * FROM tbl_Bill
+
+
+INSERT INTO  TBL_PAYMENTS VALUES
+(3,500,1,'SUCCESS','CARD','2018-07-21'),
+(4,501,2,'SUCCESS','CARD','2018-08-22'),
+(5,502,3,'SUCCESS','CARD','2018-07-20')
+
+SELECT * FROM TBL_PAYMENTS
+
+--INSERT VALUES ENDS
+
+--TRIGGERS STARTS
+SELECT * FROM INFO
+SELECT * FROM TBL_cUSTOMER
+
+--UPDATES IN INFO REGARDING INSERTION
+
+CREATE TRIGGER tr_tbl_customer_ForInsert
+ON tbl_customer
+FOR INSERT
+AS
+BEGIN
+DECLARE @new VARCHAR(100)
+SELECT @new=FirstName+LastName FROM Inserted
+INSERT INTO INFO 
+VALUES('NEW PERSON NAMED ' +@new+  ' registered on '+ CAST(GETDATE() AS VARCHAR) )
+END
+
+begin tran
+INSERT INTO tbl_Customer VALUES
+('Amrut1','D','Hubli','KARNATAKA','IND',580023,90666215)
+
+rollback
+
+SELECT * FROM INFO
+
+--UPDATES REGARDING DELETEION OF CUSTOMER
+SELECT * FROM TBL_cUSTOMER
+
+CREATE TRIGGER tr_tbl_Customer_ForDelete
+ON Tbl_Customer
+FOR DELETE
+AS
+BEGIN
+DECLARE @id int
+SELECT @id=CustomerId FROM Deleted
+INSERT INTO INFO 
+VALUES ('PERSON WITH CUSTOMER ID ' + cast(@id as varchar) + ' Got deleted ')
+END
+
+
+
+DELETE FROM tbl_Customer
+where CustomerID = 12
+SELECT * FROM INFO
+
+
+
+--UPDATES IN INFO REGARDING INSERTION OF RESTAURANT
+
+SELECT * FROM Tbl_Restaurant
+
+CREATE TRIGGER tr_tbl_restaurant_ForInsert
+ON tbl_RESTAURANT
+FOR INSERT
+AS
+BEGIN
+DECLARE @new VARCHAR(100)
+SELECT @new=RestaurantName FROM Inserted
+INSERT INTO INFO_REST
+VALUES('NEW RESTAURANT ' +@new+  ' ADDED ON '+ CAST(GETDATE() AS VARCHAR) )
+END
+
+SELECT * FROM  INFO_REST
+INSERT INTO Tbl_Restaurant values ('POTOBA','MADHURA COLONY','HUBLI','KARNATAKA',580023,'9AM-9PM','SUN-SAT')
+
+--TOUPDATE A DELETED VALUE
+CREATE TRIGGER tr_tbl_restaurant_ForDelete
+ON Tbl_restaurant
+FOR DELETE
+AS
+BEGIN
+DECLARE @id int
+SELECT @id=RestaurantId FROM Deleted
+INSERT INTO INFO_REST
+VALUES ('RESTAURANT WITH RESTAURANT ID ' + cast(@id as varchar) + ' Got deleted ')
+END
+
+SELECT * FROM Tbl_Restaurant
+select * from INFO_REST
+
+
+DELETE FROM Tbl_Restaurant 
+WHERE RestaurantId=13
+
+--CHANGES MADE IN REVIEWWS
+
+SELECT * FROM tbl_Review
+
+ALTER TRIGGER tr_tbl_review_FORUPDATE
+on tbl_Review
+for update
+as
+begin
+DECLARE @FeedbackId int
+DECLARE @oldreview varchar(45), @newreview varchar(45)
+DECLARE @oldratings int,@newratings int
+DECLARE @oldrdate date,@newrdate date
+DECLARE @oldcustomerid int,@newcustomerid int
+DECLARE @oldrestid int ,@newrestid int
+DECLARE @oldfooditemid int,@newfooditemid int
+
+DECLARE @AUDIT VARCHAR(1000)
+
+SELECT * INTO #TEMPTABLE FROM INSERTED
+
+WHILE(EXISTS(SELECT feedbackId from #TEMPTABLE))
+begin
+SET @AUDIT =''
+
+
+SELECT TOP 1 @FeedbackId=feedbackId,
+@newreview=REVIEWS,@newratings=ratings,@newrdate=rdate,@newcustomerid=customerid
+,@newrestid=restaurantid,@newfooditemid=FoodItemId
+from #TEMPTABLE
+
+
+SELECT TOP 1 @FeedbackId=feedbackId,
+@oldreview=REVIEWS,@oldratings=ratings,@newrdate=rdate,@oldcustomerid=customerid
+,@oldrestid=restaurantid,@oldfooditemid=FoodItemId
+from deleted where FeedbackId=@feedbackid
+
+
+SET @AUDIT = 'REVIEW WITH ID '+ CAST (@FeedbackId as varcHAR) +' changed '
+
+if(@oldreview<>@newreview)
+SET @AUDIT = @AUDIT + ' REVIEW CHANGED FROM '+ @oldreview +' TO '+@newreview
+
+if(@oldratings<>@newratings)
+SET @AUDIT = @AUDIT + ' RATINGS CHANGED FROM '+ CAST(@oldratings AS VARCHAR) +' TO '+CAST(@newratings AS VARCHAR)
+
+if(@oldrdate<>@newRDATE)
+SET @AUDIT = @AUDIT + ' DATE CHANGED FROM '+ CAST(@oldrdate AS VARCHAR) +' TO '+ CAST(@newrdate AS VARCHAR)
+
+INSERT INTO INFO VALUES(@AUDIT)
+
+DELETE FROM #TEMPTABLE WHERE FeedbackId=@FeedbackId
+END
+END
+
+SELECT * FROM tbl_Review
+UPDATE tbl_Review
+SET RATINGS=5
+WHERE FeedbackId=1
+select * from info
+
+
+
+
+--trigger end
+
+--STORED PROCEDURE 
+
+-- 1) To count the cust numbers
+CREATE PROC spCustCount
+as begin
+select COUNT(*) from tbl_Customer
+end
+
+spCustCount
+
+
+--2) To Update the name of customer
+CREATE PROC spupdatecustname
+@id int,
+@name Varchar(45)
+AS
+BEGIN
+UPDATE tbl_Customer
+SET FirstName=@name
+where CustomerID=@id
+END
+
+spupdatecustname 1,'Vineet'
+
+SELECT * FROM tbl_Customer
+
+--3)GETTING THE ORDERS FROM RESTURANT
+
+SELECT * FROM TBL_ORDER
+
+CREATE PROC spCountorders
+@count INT OUTPUT,
+@rest INT
+AS
+BEGIN
+SELECT @count=COUNT(*) FROM TBL_ORDER
+where RestaurantId=@REST 
+END
+
+DECLARE @out int
+EXEC spCountorders @out OUTPUT,10
+select @out
+
+--4) Getting ResturantName by order ID
+CREATE PROC spGetRestNamebyOrderID
+@OID INT,
+@RESTNAME VARCHAR(45) OUTPUT
+AS
+BEGIN
+SELECT @RESTNAME=Restaurantname from Tbl_Restaurant a,tbl_order b
+where a.RestaurantId=b.RestaurantId and b.orderid=@OID
+end
+
+
+
+DECLARE @restaurantname varchar(45)
+EXEC spGetRestNamebyOrderID 1005,@restaurantname OUTPUT
+SELECT @restaurantname
+
+--5)Checking promocode
+
+select * from Tbl_Promocode
+
+
+CREATE PROC spCheckPromo
+@promocode VARCHAR(45),
+@out VARCHAR(45) OUTPUT
+AS
+BEGIN
+SELECT  @OUT=(CASE
+WHEN Promocode=@promocode THEN 'VALID PROMOCODE'
+ELSE 'INVALID PROMOCODE'
+END
+)
+FROM Tbl_Promocode
+WHERE Promocode=@promocode
+END
+
+
+
+DECLARE @out varchar(45)
+EXEC spCheckPromo 'EXTRA10',@out OUTPUT
+IF(@out is null)
+print('INVALID PROMOCODE')
+else
+print('VALID PROMOCODE')
+
+--stored procedure ends
+
+
+SELECT * FROM tbl_customer
+SELECT * FROM login
+SELECT * FROM tbl_order
+SELECT * FROM tbl_card
+SELECT * FROM tbl_bill
+SELECT * FROM tbl_delivery
+SELECT * FROM Tbl_DeliveryStaff
+SELECT * FROM tbl_restaurant
+SELECT * FROM tbl_payments
+SELECT * FROM Tbl_FoodItems
+SELECT * FROM tbl_Review
+SELECT * FROM tbl_promocode
+SELECT * FROM info 
+SELECT * FROM INFO_REST
