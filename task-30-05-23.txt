@@ -1,0 +1,149 @@
+1)A Table Variable can be used inside a Function.
+
+
+CREATE FUNCTION ufn_demo()
+RETURNS INT
+AS
+BEGIN
+    DECLARE @Temp1 INT ,@Temp2 INT
+    SET @Temp1 =10 
+	SET @Temp2 = 20
+    RETURN @Temp1+@Temp2
+END
+
+select dbo.ufn_demo()
+
+
+2)Can we call a function inside a stored procedure
+
+CREATE PROCEDURE usp_demo
+@Temp1 INT OUTPUT
+AS 
+BEGIN
+	SET @temp1=dbo.ufn_demo()
+END
+
+
+DECLARE @temp1 INT
+EXECUTE usp_DEMO @TEMP1 OUT
+PRINT @temp1
+
+
+
+
+3) Can we call a stored procedure inside a function?
+
+CREATE PROCEDURE usp_demo_2
+@TEMP1 int OUTPUT
+as 
+begin
+	set @TEMP1=50
+end
+
+DECLARE @temp1 INT
+EXECUTE usp_demo_2 @temp1 OUT
+PRINT @temp1
+
+
+CREATE FUNCTION fn_DEMO2()
+RETURNS INT
+AS
+BEGIN
+    DECLARE @Temp1 INT
+    SET @Temp1 = usp_demo_2
+    RETURN @Temp1
+END
+
+
+
+4)Can we call trigger inside a Stored Procedure
+
+
+CREATE TABLE demo (
+    a INT PRIMARY KEY,     b int,      c int
+);
+
+CREATE TRIGGER UpdateTrigger
+ON demo
+AFTER INSERT
+AS
+BEGIN
+    UPDATE demo
+    SET a = b + c 
+   END;
+
+ CREATE PROCEDURE InsertWithTrigger
+    @a INT,
+    @b int,
+    @c int
+AS
+BEGIN
+    INSERT INTO demo VALUES (@a, @b, @c);
+    EXEC UpdateTrigger;
+END;
+
+EXEC InsertWithTrigger @a = 34, @b = 4, @c = 30;
+
+select * from demo
+
+
+
+
+
+
+5)Join table valued function with a table
+
+SELECT *  FROM tbl_employee
+
+CREATE FUNCTION ufn_empInfo()
+RETURNS TABLE
+AS
+RETURN(SELECT * FROM tbl_EMPLOYEE)
+
+select * from tbl_Department
+
+
+select empno,ename,job,d.deptno,dname from ufn_empInfo() e join tbl_department d on e.deptno=d.deptno
+
+
+
+
+
+
+6) Join table valued function(with input parameters) with a table
+
+CREATE FUNCTION ufn_emp_info(@emp varchar(20))
+RETURNS TABLE
+AS
+RETURN(SELECT * FROM EMPLOYEE where empno=@emp)
+
+SELECT empno,ename,job,d.deptno,dname FROM ufn_emp_info('8369') e JOIN department d on e.deptno=d.deptno
+
+
+
+
+
+
+
+
+7) Instead of triggers for tables
+
+CREATE TABLE demo2 (
+    a INT PRIMARY KEY,
+    b INT,
+    c DATE
+);
+
+CREATE TRIGGER InsteadOfInsertTrigger
+ON demo2
+INSTEAD OF INSERT
+AS
+BEGIN
+    INSERT INTO demo2 (a, b, c)
+    SELECT a, b, GETDATE()
+    FROM inserted;
+END;
+
+select * from demo2
+
+INSERT INTO demo2(a, b) VALUES (2, 200);
